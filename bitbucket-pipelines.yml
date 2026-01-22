@@ -1,0 +1,24 @@
+image: docker:20.10.16
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Build and Push Docker Image (Anarock Admin)
+          services:
+            - docker
+          script:
+            - echo "🔁 Checking out code..."
+            - echo "🐳 Logging in to Docker Hub..."
+            - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+
+            - echo "🏗️ Building Docker image..."
+            - docker build -t "$DOCKER_USER/anarock_admin:1.8" .
+
+            - echo "📤 Pushing Docker image to Docker Hub..."
+            - docker push "$DOCKER_USER/anarock_admin:1.8"
+
+definitions:
+  services:
+    docker:
+      memory: 2048

@@ -1,0 +1,153 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { addHomeDetails, editHomeDetails, getHomeDetails, viewHomeDetails,updateHomeStatus  } from "../actions/home-action";
+
+
+const homeSlice = createSlice({
+    name:"home",
+    initialState:{
+        data:[],
+        details:null,
+        loading:false,
+        error:null,
+        formStatus:false,
+        nextCursor: null,
+        hasNextPage: false,
+        isFirstLoad: true,
+        searchText: "",
+  },
+
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+
+    clearDetails: (state) => {
+      state.details = null;
+      state.formStatus = false;
+    },
+
+    clearHomeState: (state) => {
+      state.data = [];
+      state.details = null;
+      state.loading = false;
+      state.error = null;
+      state.formStatus = false;
+      state.nextCursor = null;
+      state.hasNextPage = false;
+      state.isFirstLoad = true;
+    },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(getHomeDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getHomeDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getHomeDetails.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
+
+  const data = action.payload?.data || [];
+  const pagination = action.payload?.pagination || {};
+
+  const search = action.meta.arg.search || "";
+  if (state.searchText !== search) {
+    state.data = data;
+    state.isFirstLoad = false;
+    state.searchText = search;
+  } else {
+  if (state.isFirstLoad) {
+    state.data = data;
+    state.isFirstLoad = false;
+  } else {
+    state.data = [...state.data, ...data];
+    }
+  }
+
+  state.nextCursor = pagination.next_cursor || null;
+  state.hasNextPage = pagination.has_next_page || false;
+})
+
+      .addCase(viewHomeDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(viewHomeDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(viewHomeDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.details = action.payload;
+      })
+
+      .addCase(addHomeDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.formStatus = false;
+      })
+      .addCase(addHomeDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addHomeDetails.fulfilled, (state) => {
+        state.loading = false;
+        state.formStatus = true;
+      })
+
+      /* ================= EDIT HOME ================= */
+      .addCase(editHomeDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.formStatus = false;
+      })
+      .addCase(editHomeDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(editHomeDetails.fulfilled, (state) => {
+        state.loading = false;
+        state.formStatus = true;
+      })
+
+      .addCase(updateHomeStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateHomeStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateHomeStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+
+        const { id, status } = action.payload;
+
+        const index = state.data.findIndex(
+          (item) => item._id === id
+        );
+
+        if (index !== -1) {
+          state.data[index].status = status;
+        }
+
+        if (state.details && state.details._id === id) {
+          state.details.status = status;
+        }
+      });
+  },
+});
+
+export const {
+  clearError,
+  clearDetails,
+  clearHomeState,
+} = homeSlice.actions;
+
+export default homeSlice.reducer;
