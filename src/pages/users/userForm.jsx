@@ -135,7 +135,7 @@ const UserForm = ({ mode }) => {
       ]}
     />
 
-    <div >
+    <div className={isView ? "" : "bg-white border border-gray-200 rounded-lg shadow-sm"}>
       <div className="p-8 space-y-12">
         {/* ✅ VIEW MODE UI UPDATED */}
         {isView ? (
