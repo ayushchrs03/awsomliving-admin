@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { FaHome, FaUser } from "react-icons/fa";
 import InfoTile from "../../components/formField/infoTile";
 import Breadcrumb from "../../components/formField/breadcrumb";
+import { FaPhoneAlt } from "react-icons/fa";
 
 import { clearDetails } from "../../redux/slices/userSlice";
 
@@ -125,33 +126,173 @@ const UserForm = ({ mode }) => {
     navigate(`/resident/edit?id=${residentId}`);
   };
 
-  return (
-    <div className="space-y-4">
-  <Breadcrumb
-    items={[
-      { label: "User", path: "/user" },
-      { label: title },
-    ]}
-  />
+ return (
+  <div className="space-y-4">
+    <Breadcrumb
+      items={[
+        { label: "User", path: "/user" },
+        { label: title },
+      ]}
+    />
 
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-
-  <div className="p-8 space-y-12">
+    <div >
+      <div className="p-8 space-y-12">
+        {/* ✅ VIEW MODE UI UPDATED */}
         {isView ? (
-          <>
-           <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Basic Information
-            </h2>
+          <div className="space-y-8">
+            {/* Top Header Card */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-5 flex items-center justify-between">
+              {/* Left */}
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
+                  <FaUser size={18} />
+                </div>
 
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-  <InfoTile label="First Name" value={formData.first_name} />
-  <InfoTile label="Last Name" value={formData.last_name} />
-  <InfoTile label="Email" value={formData.email} />
-  <InfoTile label="Phone" value={formData.phone} />
-</div>
-          </>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-semibold text-gray-900">
+                      {formData.first_name} {formData.last_name}
+                    </h2>
+
+                    <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
+                      ACTIVE
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-500 mt-1">
+                    {homes.length} Homes • {residents.length} Residents
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <p className="text-xs text-gray-400 font-semibold uppercase">
+                  Primary Email
+                </p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {formData.email} 
+                </p>
+              </div>
+            </div>
+
+            {/* Homes Section */}
+            {homes.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-semibold text-gray-700">Homes</h2>
+                  <p className="text-sm text-gray-500">
+                    Total: {homes.length}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {homes.map((home, index) => (
+                    <div
+                      key={home._id}
+                      onClick={() => handleHomeView(home._id)}
+                      className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md transition"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+                            <FaHome size={16} />
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {home.name || `Home ${index + 1}`}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Home {index + 1}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button className="text-gray-400 hover:text-gray-600">
+                          ⋮
+                        </button>
+                      </div>
+
+                      <p className="text-sm font-medium text-orange-600 mt-4">
+                        View →
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Residents Section */}
+            {residents.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-semibold text-gray-700">
+                    Residents
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Total: {residents.length}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {residents.map((resident) => (
+                    <div
+                      key={resident._id}
+                      onClick={() => handleResidentView(resident._id)}
+                      className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md transition"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold">
+                              {resident?.name?.charAt(0) || "R"}
+                            </div>
+
+                            <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {resident.name}
+                            </p>
+
+                            <p className="text-xs text-gray-500">
+                              {/* {resident.age || "--"} Years •{" "} */}
+                              {/* {resident.gender || "--"} */}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button className="text-gray-400 hover:text-gray-600">
+                          ⋮
+                        </button>
+                      </div>
+
+                      <div className="mt-4 space-y-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          {/* <span className="text-gray-400">📞</span> */}
+                          <FaPhoneAlt/>
+                          <p>{resident.phone || "—"}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {/* <span className="text-gray-400">✉️</span> */}
+                          {/* <p>{resident.email || "—"}</p> */}
+                        </div>
+                      </div>
+
+                      <p className="text-sm font-medium text-blue-600 mt-4">
+                        View →
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          /* ✅ ADD / EDIT MODE (UNCHANGED) */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <FormField
               label="First Name"
               name="first_name"
@@ -197,79 +338,7 @@ const UserForm = ({ mode }) => {
           </div>
         )}
 
-        {(isView || isEdit) && homes.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Homes</h2>
-              <span className="text-sm text-gray-500">Total: {homes.length}</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {homes.map((home, index) => (
-                <div
-                  key={home._id}
-                  onClick={() =>
-                    isView ? handleHomeView(home._id) : handleHomeEdit(home._id)
-                  }
-                  className="p-5 border border-orange-200 bg-gradient-to-br from-orange-50 to-white rounded-xl flex items-center gap-4 cursor-pointer hover:bg-orange-100 hover:border-orange-300 hover:shadow-md transition"
-                >
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-orange-100 text-orange-600">
-                    <FaHome size={18} />
-                  </div>
-
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500">Home {index + 1}</p>
-                    <p className="font-semibold text-gray-800">{home.name}</p>
-
-                    <p className="text-sm font-medium text-orange-600 mt-1">
-                      {isView ? "View →" : "Edit →"}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {(isView || isEdit) && residents.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Residents</h2>
-              <span className="text-sm text-gray-500">
-                Total: {residents.length}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {residents.map((resident, index) => (
-                <div
-                  key={resident._id}
-                  onClick={() =>
-                    isView
-                      ? handleResidentView(resident._id)
-                      : handleResidentEdit(resident._id)
-                  }
-                  className="p-5 border border-blue-200 bg-gradient-to-br from-blue-50 to-white rounded-xl flex items-center gap-4 cursor-pointer hover:bg-blue-100 hover:border-blue-300 hover:shadow-md transition"
-                >
-                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                    <FaUser size={18} />
-                  </div>
-
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500">Resident {index + 1}</p>
-                    <p className="font-semibold text-gray-800">{resident.name}</p>
-                    <p className="text-sm text-gray-500">{resident.phone}</p>
-
-                    <p className="text-sm font-medium text-blue-600 mt-1">
-                      {isView ? "View →" : "Edit →"}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
+        {/* ✅ Buttons */}
         <div className="flex justify-end gap-3 pt-4">
           <button
             onClick={() => navigate(-1)}
@@ -290,8 +359,9 @@ const UserForm = ({ mode }) => {
         </div>
       </div>
     </div>
-    </div>
-  );
+  </div>
+);
+
 };
 
 export default UserForm;
