@@ -1,12 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const Breadcrumb = ({ items }) => {
+const Breadcrumb = ({ items = [] }) => {
   const navigate = useNavigate();
+
+  const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    ...items,
+  ];
 
   return (
     <div className="flex items-center gap-2 text-xl px-2">
-      {items.map((item, index) => (
+      {breadcrumbItems.map((item, index) => (
         <React.Fragment key={index}>
           {index !== 0 && <span className="text-gray-400">/</span>}
 
@@ -26,4 +31,4 @@ const Breadcrumb = ({ items }) => {
   );
 };
 
-export default  Breadcrumb
+export default Breadcrumb;
