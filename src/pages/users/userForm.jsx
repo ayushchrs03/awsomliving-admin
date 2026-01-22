@@ -11,6 +11,7 @@ import {
 import { toast } from "react-hot-toast";
 import { FaHome, FaUser } from "react-icons/fa";
 import InfoTile from "../../components/formField/infoTile";
+import Breadcrumb from "../../components/formField/breadcrumb";
 
 import { clearDetails } from "../../redux/slices/userSlice";
 
@@ -125,18 +126,17 @@ const UserForm = ({ mode }) => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="flex items-center gap-3 px-6 pt-4 border-gray-200">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-        >
-          <IoIosArrowBack size={18} />
-        </button>
-        <h1 className="text-xl font-semibold text-gray-800">{title}</h1>
-      </div>
+    <div className="space-y-4">
+  <Breadcrumb
+    items={[
+      { label: "User", path: "/user" },
+      { label: title },
+    ]}
+  />
 
-      <div className="p-8 space-y-12">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+
+  <div className="p-8 space-y-12">
         {isView ? (
           <>
            <h2 className="text-lg font-semibold text-gray-800 mb-4">
@@ -289,6 +289,7 @@ const UserForm = ({ mode }) => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

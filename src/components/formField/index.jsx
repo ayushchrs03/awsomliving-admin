@@ -21,13 +21,7 @@ const FormField = ({
 
   return (
     <div
-      className={`
-        p-5 rounded-xl border
-        shadow-sm
-        transition-all duration-300 ease-out
-        hover:-translate-y-1 hover:shadow-lg
-        ${error ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}
-      `}
+      className={`p-2`}
     >
       <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1">
         {label}
@@ -62,7 +56,7 @@ const FormField = ({
             onChange={onChange}
             required={required}
            className={`
-  w-full mt-2 bg-transparent text-base font-semibold text-gray-900
+  w-full mt-2 bg-transparent text-base text-gray-900
   outline-none border-b pb-1 border-gray-400
 `}
           >
@@ -90,7 +84,7 @@ const FormField = ({
             }
             placeholder={`Enter ${label}`}
            className={`
-  w-full mt-2 bg-transparent text-base font-semibold text-gray-900
+  w-full mt-2 bg-transparent text-base text-gray-900
   outline-none placeholder:text-gray-400 border-b border-gray-400 pb-1
 
 `}

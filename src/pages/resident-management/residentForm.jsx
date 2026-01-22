@@ -5,6 +5,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import FormField from "../../components/formField";
 import InfoTile from "../../components/formField/infoTile";
+import Breadcrumb from "../../components/formField/breadcrumb";
 import {
   addResidentDetails,
   editResidentDetails,
@@ -194,17 +195,16 @@ useEffect(() => {
       ? "Eltum"
       : formData.deviceType || "-";
 
-  return (
+ return (
+  <div className="space-y-4">
+   <Breadcrumb
+  items={[
+    { label: "Resident", path: "/resident" },
+    { label: title },
+  ]}
+/>
+
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="flex items-center gap-3 px-6 pt-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-full border border-gray-300 hover:bg-gray-100"
-        >
-          <IoIosArrowBack size={18} />
-        </button>
-        <h1 className="text-xl font-semibold">{title}</h1>
-      </div>
 
       <div className="p-8 space-y-12 w-full">
         {isView ? (
@@ -217,10 +217,22 @@ useEffect(() => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <InfoTile label="Resident Name" value={formData.name || "-"} />
                 <InfoTile label="Resident Age" value={formData.age || "-"} />
-                <InfoTile label="Resident Contact Number" value={formData.phone || "-"} />
-                <InfoTile label="Resident Gender" value={formData.gender || "-"} />
-                <InfoTile label="Emergency Contact Name" value={formData.emergency_con_name || "-"} />
-                <InfoTile label="Emergency Contact Number" value={formData.emergency_con_num || "-"} />
+                <InfoTile
+                  label="Resident Contact Number"
+                  value={formData.phone || "-"}
+                />
+                <InfoTile
+                  label="Resident Gender"
+                  value={formData.gender || "-"}
+                />
+                <InfoTile
+                  label="Emergency Contact Name"
+                  value={formData.emergency_con_name || "-"}
+                />
+                <InfoTile
+                  label="Emergency Contact Number"
+                  value={formData.emergency_con_num || "-"}
+                />
                 <InfoTile label="Email" value={formData.email || "-"} />
               </div>
             </div>
@@ -243,7 +255,10 @@ useEffect(() => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <InfoTile label="Device Type" value={deviceTypeLabel || "-"} />
-                <InfoTile label="Device Value" value={formData.deviceValue || "-"} />
+                <InfoTile
+                  label="Device Value"
+                  value={formData.deviceValue || "-"}
+                />
               </div>
             </div>
           </>
@@ -304,7 +319,9 @@ useEffect(() => {
                   label="Emergency Contact Name"
                   name="emergency_con_name"
                   value={formData.emergency_con_name}
-                  onChange={(e) => onChangeField("emergency_con_name", e.target.value)}
+                  onChange={(e) =>
+                    onChangeField("emergency_con_name", e.target.value)
+                  }
                   rules={[{ type: "required" }]}
                   error={errors.emergency_con_name}
                 />
@@ -339,7 +356,7 @@ useEffect(() => {
 
             <div>
               <h3 className="font-medium mb-4">Assignment</h3>
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <FormField
                   label="Select User"
                   name="userId"
@@ -393,7 +410,11 @@ useEffect(() => {
 
               {formData.deviceType && (
                 <FormField
-                  label={formData.deviceType === "emfit" ? "Enter SR Number" : "Enter Camera ID"}
+                  label={
+                    formData.deviceType === "emfit"
+                      ? "Enter SR Number"
+                      : "Enter Camera ID"
+                  }
                   name="deviceValue"
                   value={formData.deviceValue}
                   onChange={(e) => onChangeField("deviceValue", e.target.value)}
@@ -425,7 +446,9 @@ useEffect(() => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ResidentForm;

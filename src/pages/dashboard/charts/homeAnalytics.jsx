@@ -125,7 +125,7 @@ export function HomeModule() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={noResidentData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              {/* <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" /> */}
               <XAxis dataKey="category" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 12 }} />
 

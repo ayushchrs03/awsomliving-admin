@@ -125,6 +125,7 @@ function Dashboard() {
     const [activeInactiveData, setActiveInactiveData] = useState([]);
     const [noResidentData, setNoResidentData] = useState([]);
     const [onlineOfflineData, setOnlineOfflineData] = useState([]);
+    const [ackResolvedTrend, setAckResolvedTrend] = useState([]);
 
 const runUserFunnelPageApi = async () => {
   try {

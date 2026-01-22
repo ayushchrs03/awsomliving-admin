@@ -172,7 +172,7 @@ useEffect(() => {
 return (
   <>
     <MetaTitle title="AwesomeLiving" />
-    {loading && <Loading />}
+    {/* {loading && <Loading />} */}
  
     <div className="relative min-h-screen w-full overflow-hidden bg-white flex items-center justify-center px-4">
       
@@ -283,24 +283,27 @@ return (
               <p className="text-sm text-red-500 text-center">{error}</p>
             )}
 
-            <Button
-              type={isOtpMode ? "button" : "submit"}
-              onClick={isOtpMode ? handleVerifyOtp : undefined}
-              disabled={
-                loading ||
-                (!isOtpMode && !watch("email")) ||
-                (isOtpMode && otp.join("").length !== 6)
-              }
-              className="w-full bg-[#EF9421] hover:bg-[#e18618] transition py-3 rounded-xl text-white font-semibold shadow-md"
-            >
-              {loading
-                ? isOtpMode
-                  ? "Verifying..."
-                  : "Sending OTP..."
-                : isOtpMode
-                ? "Verify OTP"
-                : "Send OTP"}
-            </Button>
+         <Button
+  type={isOtpMode ? "button" : "submit"}
+  onClick={!loading && isOtpMode ? handleVerifyOtp : undefined}
+  disabled={
+    loading ||
+    (!isOtpMode && !watch("email")) ||
+    (isOtpMode && otp.join("").length !== 6)
+  }
+  className={`w-full bg-[#EF9421] hover:bg-[#e18618] transition py-3 rounded-xl text-white font-semibold shadow-md ${
+    loading ? "opacity-60 cursor-not-allowed" : ""
+  }`}
+>
+  {loading
+    ? isOtpMode
+      ? "Verifying..."
+      : "Sending OTP..."
+    : isOtpMode
+    ? "Verify OTP"
+    : "Send OTP"}
+</Button>
+
 
             {isOtpMode && (
               <div className="text-center">
