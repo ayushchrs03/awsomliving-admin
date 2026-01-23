@@ -124,6 +124,7 @@ const DataTablePro = ({
     if (!selectedId) return;
     navigate(`${editLink}?id=${selectedId}`);
   };
+const entityName = title?.split(" ")?.[0] || "Item";
 
   return (
     <>
@@ -143,35 +144,33 @@ const DataTablePro = ({
         {showStats && (
 
 <div className="grid grid-cols-3 gap-4 mb-4">
-  {/* Total */}
+  
   <div className="bg-green-50 rounded-xl p-4">
     <div className="flex items-center gap-2 text-base text-gray-600">
       <FaUsers className="text-green-600" size={14} />
-      <p>Total User</p>
+      <p>Total {entityName}</p>
     </div>
     <h3 className="text-xl font-semibold mt-2">{stats.total}</h3>
   </div>
 
-  {/* Active */}
   <div className="bg-blue-50 rounded-xl p-4">
     <div className="flex items-center gap-2 text-base text-gray-600">
       <FaUserCheck className="text-blue-600" size={14} />
-      <p>Active User</p>
+      <p>Active {entityName}</p>
     </div>
     <h3 className="text-xl font-semibold mt-2">{stats.active}</h3>
   </div>
 
-  {/* Inactive */}
   <div className="bg-red-50 rounded-xl p-4">
     <div className="flex items-center gap-2 text-base text-gray-600">
       <FaUserTimes className="text-red-600" size={14} />
-      <p>Inactive User</p>
+      <p>Inactive {entityName}</p>
     </div>
     <h3 className="text-xl font-semibold mt-2">{stats.inactive}</h3>
   </div>
 </div>
 
-        )} 
+       )} 
 
         <div className="flex md:flex-row md:items-center md:justify-between gap-3 mb-4">
           {selectable && showBulkActions && selectedIds.length > 0 ? (

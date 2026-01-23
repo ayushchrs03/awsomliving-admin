@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getHomeDetails, updateHomeStatus } from "../../redux/actions/home-action";
 import { clearHomeState } from "../../redux/slices/homeSlice";
 import { toast } from "react-hot-toast";
+import Breadcrumb from "../../components/formField/breadcrumb";
 
 export const headers = [
   { fieldName: "name", headerName: "Home Name" },
@@ -89,6 +90,8 @@ function Home() {
   };
 
   return (
+    <>
+     <Breadcrumb items={[{ label: "Home" }]} />
     <DataTable
       loading={loading}
       headers={headers}
@@ -110,6 +113,7 @@ function Home() {
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
     />
+    </>
   );
 }
 

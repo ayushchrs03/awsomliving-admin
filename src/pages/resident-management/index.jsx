@@ -7,6 +7,7 @@ import {
 import { resetResidentList } from "../../redux/slices/residentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import Breadcrumb from "../../components/formField/breadcrumb";
 
 export const headers = [
   { fieldName: "name", headerName: "Resident Name" },
@@ -87,6 +88,9 @@ function Resident() {
   };
 
   return (
+     <>
+      <Breadcrumb items={[{ label: "Resident" }]} />
+
     <DataTable
       loading={loading}
       headers={headers}
@@ -110,6 +114,7 @@ function Resident() {
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
     />
+    </>
   );
 }
 

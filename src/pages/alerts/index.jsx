@@ -4,6 +4,7 @@ import { getAlertDetails, updateAlertStatus } from "../../redux/actions/alert-ac
 import { clearAlertState } from "../../redux/slices/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import Breadcrumb from "../../components/formField/breadcrumb";
 
 export const headers = [
   { fieldName: "name", headerName: "Alert Name" },
@@ -77,6 +78,9 @@ function Alerts() {
   };
 
   return (
+    <>
+         <Breadcrumb items={[{ label: "Alert" }]} />
+    
     <DataTable
       loading={loading}
       headers={headers}
@@ -100,6 +104,8 @@ function Alerts() {
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
     />
+    </>
+
   );
 }
 

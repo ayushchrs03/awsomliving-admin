@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { FiCopy } from "react-icons/fi";
 import { toast } from "react-hot-toast";
+import Breadcrumb from "../../components/formField/breadcrumb";
 
 export const headers = [
   { fieldName: "deviceName", headerName: "Device Name" },
@@ -114,6 +115,8 @@ const handleCopyToken = async () => {
 
   return (
     <>
+     <Breadcrumb items={[{ label: "Device" }]} />
+
       <DataTable
         loading={loading}
         headers={headers}
