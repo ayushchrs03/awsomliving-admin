@@ -126,6 +126,9 @@ const DataTablePro = ({
   };
 const entityName = title?.split(" ")?.[0] || "Item";
 
+const handleAdd =()=>{
+      navigate(`${addLink}`);
+}
   return (
     <>
       <div className="px-2">
@@ -135,7 +138,7 @@ const entityName = title?.split(" ")?.[0] || "Item";
           </h2>
 
           {showAddButton && (
-          <button className="bg-[#EF9421] text-white hover:bg-orange-500 px-4 py-2 rounded text-sm flex items-center gap-2 whitespace-nowrap">
+          <button className="bg-[#EF9421] text-white hover:bg-orange-500 px-4 py-2 rounded text-sm flex items-center gap-2 whitespace-nowrap" onClick={handleAdd}>
     <MdOutlineAddBox size={18} />
     {addButtonLabel}
   </button>
