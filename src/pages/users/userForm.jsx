@@ -127,7 +127,7 @@ const UserForm = ({ mode }) => {
   };
 
  return (
-  <div className="space-y-4">
+  <div>
     <Breadcrumb
       items={[
         { label: "User", path: "/user" },
@@ -135,8 +135,8 @@ const UserForm = ({ mode }) => {
       ]}
     />
 
-    <div className={isView ? "" : "bg-white border border-gray-200 rounded-lg shadow-sm"}>
-      <div className={isView ? "" : "p-8 space-y-4"}>
+    <div>
+      <div >
     
         {isView ? (
           <div className="space-y-4">
@@ -289,72 +289,78 @@ const UserForm = ({ mode }) => {
             )}
           </div>
         ) : (
-          /* ✅ ADD / EDIT MODE (UNCHANGED) */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <FormField
-              label="First Name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={(e) => onChangeField("first_name", e.target.value)}
-              rules={[{ type: "required" }]}
-              error={errors.first_name}
-            />
+          <>
+          <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New User" : "Edit User"}
+</p>
+          <div className="bg-[#ffffff]">
+  <div className="grid grid-cols-2 md:grid-cols-2 gap-5">
+    <FormField
+      label="First Name"
+      name="first_name"
+      value={formData.first_name}
+      onChange={(e) => onChangeField("first_name", e.target.value)}
+      rules={[{ type: "required" }]}
+      error={errors.first_name}
+    />
 
-            <FormField
-              label="Last Name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={(e) => onChangeField("last_name", e.target.value)}
-              rules={[{ type: "required" }]}
-              error={errors.last_name}
-            />
+    <FormField
+      label="Last Name"
+      name="last_name"
+      value={formData.last_name}
+      onChange={(e) => onChangeField("last_name", e.target.value)}
+      rules={[{ type: "required" }]}
+      error={errors.last_name}
+    />
+  </div>
 
-            <FormField
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => onChangeField("email", e.target.value)}
-              rules={[{ type: "required" }, { type: "email" }]}
-              error={errors.email}
-            />
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <FormField
+      label="User Email"
+      name="email"
+      type="email"
+      value={formData.email}
+      onChange={(e) => onChangeField("email", e.target.value)}
+      rules={[{ type: "required" }, { type: "email" }]}
+      error={errors.email}
+    />
 
-            <FormField
-              label="Phone"
-              name="phone"
-              type="text"
-              value={formData.phone}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (allowOnlyTenDigits(value)) {
-                  onChangeField("phone", value);
-                }
-              }}
-              rules={[{ type: "required" }, { type: "length", value: 10 }]}
-              error={errors.phone}
-            />
-          </div>
+    <FormField
+      label="Contact Number"
+      name="phone"
+      type="text"
+      value={formData.phone}
+      onChange={(e) => {
+        const value = e.target.value;
+        if (allowOnlyTenDigits(value)) {
+          onChangeField("phone", value);
+        }
+      }}
+      rules={[{ type: "required" }, { type: "length", value: 10 }]}
+      error={errors.phone}
+    />
+  </div>
+
+  {/* ✅ Buttons now inside card */}
+  <div className="flex justify-end gap-3 pt-6 px-2 pb-6">
+    <button
+      onClick={() => navigate(-1)}
+      className="px-5 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+    >
+      Cancel
+    </button>
+
+    <button
+      onClick={handleSubmit}
+      disabled={loading}
+      className="px-6 py-2 rounded-md bg-[#EF9421] text-white hover:opacity-90 transition"
+    >
+      {loading ? "Saving..." : buttonLabel}
+    </button>
+  </div>
+</div>
+
+          </>
         )}
-
-        {/* ✅ Buttons */}
-        <div className="flex justify-end gap-3 pt-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-5 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
-          >
-            {isView ? "Back" : "Cancel"}
-          </button>
-
-          {!isView && (
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-2 rounded-md bg-[#EF9421] text-white hover:opacity-90 transition"
-            >
-              {loading ? "Saving..." : buttonLabel}
-            </button>
-          )}
-        </div>
       </div>
     </div>
   </div>

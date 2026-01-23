@@ -196,7 +196,7 @@ useEffect(() => {
       : formData.deviceType || "-";
 
  return (
-  <div className="space-y-4">
+  <div >
    <Breadcrumb
   items={[
     { label: "Resident", path: "/resident" },
@@ -204,9 +204,9 @@ useEffect(() => {
   ]}
 />
 
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div>
 
-      <div className="p-8 space-y-12 w-full">
+      <div>
         {isView ? (
           <>
             <div>
@@ -263,9 +263,12 @@ useEffect(() => {
             </div>
           </>
         ) : (
+          <>
+            <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New Resident " : "Edit Resident "}
+</p>
           <div className="space-y-10 w-full md:w-1/2">
             <div>
-              <h3 className="font-medium mb-4">Basic Information</h3>
+              <h3 className="font-medium mb-4 px-2">Basic Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <FormField
                   label="Resident Name"
@@ -355,7 +358,7 @@ useEffect(() => {
             </div>
 
             <div>
-              <h3 className="font-medium mb-4">Assignment</h3>
+              <h3 className="font-medium mb-4 px-2">Assignment</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <FormField
                   label="Select User"
@@ -384,7 +387,7 @@ useEffect(() => {
             <div>
               <h3 className="font-medium mb-4">Device Setup</h3>
 
-              <div className="flex gap-6 mb-4">
+              <div className="flex gap-6 mb-4 px-2">
                 <label className="flex items-center gap-2 text-black">
                   <input
                     type="checkbox"
@@ -424,6 +427,7 @@ useEffect(() => {
               )}
             </div>
           </div>
+          </>
         )}
 
         <div className="flex justify-end gap-3 pt-6">

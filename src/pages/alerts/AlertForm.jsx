@@ -142,7 +142,7 @@ useEffect(() => {
       : "-";
 
   return (
-    <div className="space-y-4">
+    <div>
   <Breadcrumb
     items={[
       { label: "Alert", path: "/alerts" },
@@ -150,10 +150,10 @@ useEffect(() => {
     ]}
   />
 
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div>
     
 
-      <div className="p-8 space-y-12 w-full">
+      <div>
         {isView ? (
           <>
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
@@ -172,6 +172,9 @@ useEffect(() => {
             </div>
           </>
         ) : (
+          <>
+            <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New User" : "Edit User"}
+</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <FormField
               label="Alert Name"
@@ -228,6 +231,8 @@ useEffect(() => {
               error={errors.notification_type}
             />
           </div>
+          </>
+
         )}
 
         <div className="flex justify-end gap-3 pt-6">
