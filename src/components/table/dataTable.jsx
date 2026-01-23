@@ -1,329 +1,352 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { TableShimmer } from '../shimmers/tableShimmer'
-import { Link } from 'react-router-dom'
-import {
-    IconButton,
-    Menu,
-    MenuItem,
-    Switch
-} from "@mui/material";
-import {
-    DotsVertical,
-    EyeArrowLeftOutline,
-    PencilOutline,
-} from "mdi-material-ui";
+import React, { useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { TableShimmer } from "../shimmers/tableShimmer";
+import { MdOutlineAddBox } from "react-icons/md";
+import { Checkbox } from "@mui/material";
+import { FaUsers } from "react-icons/fa";
+import { FaUserCheck } from "react-icons/fa";
+import { FaUserTimes } from "react-icons/fa"
 import SearchIcon from "@mui/icons-material/Search";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
-const DataTable = ({
-    loading = false,
-    headers = [],
-    data = [],
-    addLink = "/",
-    onGenerateToken,
-    addButtonLabel = "Add",
-    showAddButton = true,
-    editLink = "/",
-    viewLink = "/",
-    title = "",
-    statusToggle = false,
-    onStatusToggle,
-    showActionType = "default",
+import { EyeArrowLeftOutline } from "mdi-material-ui";
+import { MdOutlineModeEditOutline } from "react-icons/md";
 
-    showLoadMore = false,
-    hasNextPage = false,
-    onLoadMore,
+const DataTablePro = ({
+  loading = false,
+  headers = [],
+  data = [],
+  title = "",
 
-    onResolveChange,
-    onSearch
+  addLink = "/",
+  addButtonLabel = "Add New",
+  showAddButton = true,
+
+  editLink = "/",
+  viewLink = "/",
+
+  // ✅ Stats Cards
+  showStats = false,
+  stats = {
+    total: 0,
+    active: 0,
+    inactive: 0,
+  },
+
+  // ✅ Row Selection
+  selectable = true,
+  selectedIds = [],
+  onSelectionChange,
+
+  // ✅ Bulk Actions
+  showBulkActions = true,
+
+  // ✅ Search + Filter
+  showSearch = true,
+  searchValue = "",
+  onSearchChange,
+  showFilter = true,
+  onFilterClick,
+
+  // ✅ Pagination / Load More
+  showLoadMore = false,
+  hasNextPage = false,
+  onLoadMore,
+
+  // ✅ Status Toggle
+  onStatusToggle,
 }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedRowId, setSelectedRowId] = useState(null);
-    const [tableData, setTableData] = useState([]);
+  const navigate = useNavigate();
 
-    const rowOptionsOpen = Boolean(anchorEl);
-    const loadMoreRef = useRef(null);
+  // ✅ Selected Row Details
+  const selectedId = selectedIds?.[0] || null;
+  const selectedItem = selectedId
+    ? data.find((item) => item._id === selectedId)
+    : null;
 
-    useEffect(() => {
-        setTableData(data);
-    }, [data]);
+  // ✅ Only one checkbox selection
+  const handleSelectOne = (item) => {
+    if (!onSelectionChange) return;
 
-    const handleRowOptionsClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    const id = item._id;
 
-    const handleRowOptionsClose = () => {
-        setAnchorEl(null);
-        setSelectedRowId(null);
-    };
+    // ✅ If same checked again -> unselect
+    if (selectedIds.includes(id)) {
+      onSelectionChange([]);
+      return;
+    }
 
-    useEffect(() => {
-      if (!showLoadMore || !loadMoreRef.current) return;
+    onSelectionChange([id]);
+  };
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const firstEntry = entries[0];
+  // ✅ Pagination (IntersectionObserver)
+  const loadMoreRef = useRef(null);
 
-          if (
-            firstEntry.isIntersecting &&
-            hasNextPage &&
-            !loading &&
-            tableData.length > 0
-          ) {
-            onLoadMore?.();
-          }
-        },
-        {
-          root: null,
-          rootMargin: "100px",
-          threshold: 0,
+  useEffect(() => {
+    if (!showLoadMore || !loadMoreRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+
+        if (
+          firstEntry.isIntersecting &&
+          hasNextPage &&
+          !loading &&
+          data.length > 0
+        ) {
+          onLoadMore?.();
         }
-      );
-
-      const currentRef = loadMoreRef.current;
-
-      if (currentRef) {
-        observer.observe(currentRef);
+      },
+      {
+        root: null,
+        rootMargin: "100px",
+        threshold: 0,
       }
-
-      return () => {
-        if (currentRef) {
-          observer.unobserve(currentRef);
-        }
-      };
-    }, [showLoadMore, hasNextPage, loading, tableData.length, onLoadMore]);
-
-    const [searchValue, setSearchValue] = useState("");
-
-    return (
-        <>
-            {loading && tableData.length === 0 ? (
-                <TableShimmer />
-            ) : (
-                <>
-                    <div className="px-2 py-3">
-                        <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            {title}
-                        </h2>
-                        {showAddButton && (
-                            <Link to={addLink}>
-                                <button className="bg-[#EF9421] text-white hover:bg-orange-500 px-3 py-2 rounded text-sm hover:opacity-90">
-                                    {addButtonLabel}
-                                </button>
-                            </Link>
-                        )}
-                    </div>
-                        {/* <div className="mt-3 flex justify-end">
-                            <div className="relative w-64">
-                                <SearchIcon
-                                    fontSize="small"
-                                    className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
-                                />
-                                <input
-                                    type="text"
-                                    value={searchValue}
-                                    placeholder={`Search ${title}...`}
-                                    onChange={(e) => {
-                                        setSearchValue(e.target.value);
-                                        onSearch?.(e.target.value);
-                                    }}
-                                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#EF9421]"
-                                />
-                            </div>
-                        </div> */}
-                    </div>
-
-                    <div className="overflow-x-auto overflow-y-auto min-h-[500px] mx-auto w-full">
-                        <table className="min-w-full bg-white dark:bg-slate-800 table-striped">
-                            <thead>
-                                <tr className="w-full bg-[#F0F0F0] dark:bg-gray-900">
-                                    {headers.map((header, index) => (
-                                        <th
-                                            key={index}
-                                            className="text-center py-4 px-4 font-normal text-xs whitespace-nowrap"
-                                        >
-                                            <div className="flex items-center justify-center text-[#121212] dark:text-gray-200">
-                                                {header.headerName}
-                                            </div>
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {tableData.map((item, index) => (
-                                    <tr
-                                        key={index}
-                                        className="table-row border-b border-dashed border-gray-300 dark:border-gray-500 last:border-none hover:bg-gray-50/50 dark:hover:bg-gray-700/50"
-                                    >
-                                        {headers.map((header, hIndex) => {
-                                            if (header.fieldName === "#") {
-                                                return (
-                                                    <td
-                                                        key={hIndex}
-                                                        className="text-center py-4 px-1 whitespace-nowrap text-xs"
-                                                    >
-                                                        {index + 1}
-                                                    </td>
-                                                );
-                                            }
-                                            if (header.fieldName === "generateToken") {
-                                                const isEmfit =
-                                                    item.deviceName?.toLowerCase() === "emfit" ||
-                                                    item.type?.toLowerCase() === "emfit";
-
-                                                return (
-                                                    <td key={hIndex} className="text-center py-4 text-xs">
-                                                        {isEmfit ? (
-                                                            <button
-                                                                onClick={() => onGenerateToken?.(item)}
-                                                                className="bg-[#EF9421] text-white px-3 py-1 rounded text-xs hover:bg-orange-400"
-                                                            >
-                                                                Generate
-                                                            </button>
-                                                        ) : "-"}
-                                                    </td>
-                                                );
-                                            }
-
-                                            if (header.headerName === "Action") {
-                                                return (
-                                                    <td
-                                                        key={hIndex}
-                                                        className="text-center py-4 px-1 whitespace-nowrap text-xs"
-                                                    >
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={(e) => {
-                                                                setSelectedRowId(item?._id);
-                                                                handleRowOptionsClick(e);
-                                                            }}
-                                                        >
-                                                            <DotsVertical />
-                                                        </IconButton>
-
-                                                        <Menu
-                                                            elevation={0}
-                                                            keepMounted
-                                                            anchorEl={anchorEl}
-                                                            open={rowOptionsOpen}
-                                                            onClose={handleRowOptionsClose}
-                                                        >
-                                                            {showActionType === "resolve" ? (
-                                                                <>
-                                                                    <MenuItem
-                                                                        onClick={() => {
-                                                                            onResolveChange?.(selectedRowId, true);
-                                                                            handleRowOptionsClose();
-                                                                        }}
-                                                                    >
-                                                                        Resolve
-                                                                    </MenuItem>
-
-                                                                    <MenuItem
-                                                                        onClick={() => {
-                                                                            onResolveChange?.(selectedRowId, false);
-                                                                            handleRowOptionsClose();
-                                                                        }}
-                                                                    >
-                                                                        Unresolved
-                                                                    </MenuItem>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <Link to={`${editLink}?id=${selectedRowId}`}>
-                                                                        <MenuItem onClick={handleRowOptionsClose}>
-                                                                            <PencilOutline fontSize="small" sx={{ mr: 2 }} />
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                    </Link>
-
-                                                                    {viewLink && (
-                                                                        <Link to={`${viewLink}?id=${selectedRowId}`}>
-                                                                            <MenuItem onClick={handleRowOptionsClose}>
-                                                                                <EyeArrowLeftOutline fontSize="small" sx={{ mr: 2 }} />
-                                                                                View
-                                                                            </MenuItem>
-                                                                        </Link>
-                                                                    )}
-                                                                </>
-                                                            )}
-                                                        </Menu>
-                                                    </td>
-                                                );
-                                            }
-
-                                            if (statusToggle && header.fieldName?.toLowerCase() === "status") {
-                                                return (
-                                                    <td
-                                                        key={hIndex}
-                                                        className="text-center py-4 px-1 whitespace-nowrap text-xs"
-                                                    >
-                                                        <Switch
-                                                            checked={Boolean(item.status)}
-                                                            onChange={() =>
-                                                                onStatusToggle &&
-                                                                onStatusToggle(item._id, item.status)
-                                                            }
-                                                            size="small"
-                                                            sx={{
-                                                                '& .MuiSwitch-switchBase.Mui-checked': {
-                                                                    color: '#EF9421',
-                                                                },
-                                                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                                                                    backgroundColor: '#EF9421',
-                                                                },
-                                                                '& .MuiSwitch-track': {
-                                                                    backgroundColor: '#E5E5E5',
-                                                                },
-                                                            }}
-                                                        />
-                                                    </td>
-                                                );
-                                            }
-
-                                           return (
-  <td
-    key={hIndex}
-    className="text-center py-4 px-1 whitespace-nowrap text-xs"
-  >
-   {hIndex === 1 && viewLink ? (
-  <Link to={`${viewLink}?id=${item._id}`}>
-    <span className="dark:text-white px-3 py-1 rounded-full cursor-pointer text-[#EF9421]">
-      {item[header.fieldName]}
-    </span>
-  </Link>
-) : (
-  <span className="dark:text-white px-3 py-1 rounded-full">
-    {item[header.fieldName]}
-  </span>
-)}
-  </td>
-);
-
-                                        })}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {showLoadMore && (
-                      <div
-                        ref={loadMoreRef}
-                        className="flex justify-center py-6 text-sm text-gray-500"
-                      >
-                        {loading
-                          ? "Loading more..."
-                          : hasNextPage
-                          ? "Scroll to load more"
-                          : ""}
-                        </div>
-                    )}
-                </>
-            )}
-        </>
     );
+
+    const currentRef = loadMoreRef.current;
+
+    if (currentRef) observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, [showLoadMore, hasNextPage, loading, data.length, onLoadMore]);
+
+  // ✅ Bulk navigation
+  const handleBulkView = () => {
+    if (!selectedId) return;
+    navigate(`${viewLink}?id=${selectedId}`);
+  };
+
+  const handleBulkEdit = () => {
+    if (!selectedId) return;
+    navigate(`${editLink}?id=${selectedId}`);
+  };
+
+  return (
+    <>
+      <div className="px-2">
+        <div className="flex items-center justify-between h-[40px] mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            {title}
+          </h2>
+
+          {showAddButton && (
+          <button className="bg-[#EF9421] text-white hover:bg-orange-500 px-4 py-2 rounded text-sm flex items-center gap-2 whitespace-nowrap">
+    <MdOutlineAddBox size={18} />
+    {addButtonLabel}
+  </button>
+          )}
+        </div>
+        {showStats && (
+
+<div className="grid grid-cols-3 gap-4 mb-4">
+  {/* Total */}
+  <div className="bg-green-50 rounded-xl p-4">
+    <div className="flex items-center gap-2 text-base text-gray-600">
+      <FaUsers className="text-green-600" size={14} />
+      <p>Total User</p>
+    </div>
+    <h3 className="text-xl font-semibold mt-2">{stats.total}</h3>
+  </div>
+
+  {/* Active */}
+  <div className="bg-blue-50 rounded-xl p-4">
+    <div className="flex items-center gap-2 text-base text-gray-600">
+      <FaUserCheck className="text-blue-600" size={14} />
+      <p>Active User</p>
+    </div>
+    <h3 className="text-xl font-semibold mt-2">{stats.active}</h3>
+  </div>
+
+  {/* Inactive */}
+  <div className="bg-red-50 rounded-xl p-4">
+    <div className="flex items-center gap-2 text-base text-gray-600">
+      <FaUserTimes className="text-red-600" size={14} />
+      <p>Inactive User</p>
+    </div>
+    <h3 className="text-xl font-semibold mt-2">{stats.inactive}</h3>
+  </div>
+</div>
+
+        )} 
+
+        <div className="flex md:flex-row md:items-center md:justify-between gap-3 mb-4">
+          {selectable && showBulkActions && selectedIds.length > 0 ? (
+            <div className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-200">
+              <div className="flex items-center">
+                {/* <Checkbox checked={true} size="small" /> */}
+                <span className="font-medium">
+                 Action
+                </span>
+              </div>
+
+              <button
+                onClick={handleBulkView}
+                className="flex items-center gap-2 text-[#3B82F6]"
+              >
+                <EyeArrowLeftOutline fontSize="small" />
+                View
+              </button>
+
+              <button
+                onClick={handleBulkEdit}
+                className="flex items-center gap-2 text-[#EF9421]"
+              >
+                <MdOutlineModeEditOutline fontSize="small" />
+                Edit
+              </button>
+            </div>
+          ) : (
+            <div />
+          )}
+
+          <div className="flex items-center gap-3 justify-end">
+            {showSearch && (
+              <div className="relative w-[260px]">
+                <SearchIcon
+                  fontSize="small"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <input
+                  type="text"
+                  value={searchValue}
+                  placeholder="Search across user"
+                  onChange={(e) => onSearchChange?.(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#EF9421]"
+                />
+              </div>
+            )}
+
+            {showFilter && (
+              <button
+                onClick={onFilterClick}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm text-[#EF9421] hover:bg-orange-50"
+              >
+                <FilterAltOutlinedIcon fontSize="small" />
+                Filter
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {loading && data.length === 0 ? (
+        <TableShimmer />
+      ) : (
+        <>
+          <div className="overflow-x-auto overflow-y-auto min-h-[500px] mx-auto w-full">
+            <table className="min-w-full bg-white dark:bg-slate-800">
+              <thead>
+                <tr className="w-full bg-[#F8F8F8] dark:bg-gray-900">
+                  {selectable && (
+                    <th className="text-center py-4 px-4 font-normal text-xs">
+                      #
+                    </th>
+                  )}
+
+                  {headers.map((header, index) => (
+                    <th
+                      key={index}
+                     className="text-left py-4 px-4 font-normal text-sm whitespace-nowrap"
+                    >
+                      <div className="flex items-center justify-start text-[#121212] dark:text-gray-200">
+                        {header.headerName}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody>
+                {data.map((item) => {
+                  const checked = selectedIds.includes(item._id);
+
+                  return (
+                    <tr
+                      key={item._id}
+                      className={`border-b border-dashed border-gray-200 dark:border-gray-500 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${
+                        checked ? "bg-orange-50 dark:bg-gray-700/40" : ""
+                      }`}
+                    >
+                      {selectable && (
+                        <td className="text-center py-4 px-4 whitespace-nowrap text-xs">
+                          <Checkbox
+                            checked={checked}
+                            onChange={() => handleSelectOne(item)}
+                            size="small"
+                          />
+                        </td>
+                      )}
+
+                      {headers.map((header, colIndex) => {
+
+                        if (header.fieldName?.toLowerCase() === "status") {
+                          return (
+                            <td
+                              key={colIndex}
+                              className="py-4 px-2 whitespace-nowrap text-xs"
+                            >
+                              <button
+                                onClick={() =>
+                                  onStatusToggle?.(item._id, item.status)
+                                }
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                  item.status === false
+                                    ? "bg-red-100 text-red-600"
+                                    : "bg-green-100 text-green-600"
+                                }`}
+                              >
+                                {item.status === false ? "Inactive" : "Active"}
+                              </button>
+                            </td>
+                          );
+                        }
+
+                        return (
+                          <td
+                            key={colIndex}
+                            className="text-left py-4 px-4 whitespace-nowrap text-sm"
+                          >
+                            {colIndex === 0 && viewLink ? (
+                              <Link to={`${viewLink}?id=${item._id}`}>
+                                <span className="text-[#EF9421] font-medium cursor-pointer">
+                                  {item[header.fieldName]}
+                                </span>
+                              </Link>
+                            ) : (
+                              <span className="text-gray-700 dark:text-white">
+                                {item[header.fieldName]}
+                              </span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {showLoadMore && (
+            <div
+              ref={loadMoreRef}
+              className="flex justify-center py-6 text-sm text-gray-500"
+            >
+              {loading
+                ? "Loading more..."
+                : hasNextPage
+                ? "Scroll to load more"
+                : ""}
+            </div>
+          )}
+        </>
+      )}
+    </>
+  );
 };
 
-export default DataTable;
+export default DataTablePro;

@@ -39,7 +39,7 @@ export const PrimaryLayout = () => {
           className={`${!collapse ? "lg:ps-60" : "w-full ps-16"} ${!phoneCollapse ? "lg:ps-60" : "w-full ps-16"
             } w-full overflow-hidden`}
         >
-          <motion.div className="page-body bg-pageBodyBg dark:dark:bg-slate-800 px-4 py-4">
+          <motion.div className="page-body bg-white dark:dark:bg-white px-4 py-4">
             <Outlet />
           </motion.div>
         </motion.div>

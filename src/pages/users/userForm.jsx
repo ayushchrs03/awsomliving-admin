@@ -136,13 +136,12 @@ const UserForm = ({ mode }) => {
     />
 
     <div className={isView ? "" : "bg-white border border-gray-200 rounded-lg shadow-sm"}>
-      <div className="p-8 space-y-12">
-        {/* ✅ VIEW MODE UI UPDATED */}
+      <div className={isView ? "" : "p-8 space-y-4"}>
+    
         {isView ? (
-          <div className="space-y-8">
-            {/* Top Header Card */}
+          <div className="space-y-4">
             <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-5 flex items-center justify-between">
-              {/* Left */}
+              
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
                   <FaUser size={18} />
@@ -175,11 +174,10 @@ const UserForm = ({ mode }) => {
               </div>
             </div>
 
-            {/* Homes Section */}
             {homes.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700">Homes</h2>
+                  <h2 className="text-xl font-semibold text-gray-700">Homes</h2>
                   <p className="text-sm text-gray-500">
                     Total: {homes.length}
                   </p>
@@ -226,7 +224,7 @@ const UserForm = ({ mode }) => {
             {residents.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700">
+                  <h2 className="text-xl font-semibold text-gray-700">
                     Residents
                   </h2>
                   <p className="text-sm text-gray-500">
