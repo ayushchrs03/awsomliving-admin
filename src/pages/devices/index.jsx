@@ -17,32 +17,26 @@ import {
 import { FiCopy } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 
-
 export const headers = [
-  { fieldName: "#", headerName: "#" },
   { fieldName: "deviceName", headerName: "Device Name" },
   { fieldName: "deviceNo", headerName: "Device No" },
   { fieldName: "resident", headerName: "Resident" },
   { fieldName: "user", headerName: "User" },
   { fieldName: "generateToken", headerName: "Generate Token" },
   { fieldName: "status", headerName: "Status" },
-  { fieldName: "", headerName: "Action" },
 ];
 
-function Users() {
+function Devices() {
   const dispatch = useDispatch();
 
-  const {
-    data = [],
-    loading,
-    hasNextPage,
-    nextCursor,
-    token,
-  } = useSelector((state) => state.device);
+  const { data = [], loading, hasNextPage, nextCursor, token } = useSelector(
+    (state) => state.device
+  );
 
   const [tokenModalOpen, setTokenModalOpen] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     dispatch(clearDeviceState());
@@ -51,7 +45,6 @@ function Users() {
 
   const tableData = data.map((item, index) => ({
     _id: item._id,
-    "#": index + 1,
     deviceName: item.type || "-",
     deviceNo: item.sr_num || item.camera_id || "-",
     resident: item.resident?.name || "-",
@@ -74,12 +67,9 @@ const handleStatusToggle = async (id, currentStatus) => {
       `Device ${currentStatus ? "deactivated" : "activated"} successfully`
     );
   } catch (error) {
-    toast.error(
-      error?.message || "Failed to update device status"
-    );
-  }
-};
-
+    toast.error(error?.message || "Failed to update device status");
+    }
+  };
 
   const handleGenerateToken = async (device) => {
     const deviceId = device._id;
@@ -105,13 +95,23 @@ const handleCopyToken = async () => {
 
   await navigator.clipboard.writeText(token);
   setCopied(true);
+  };
 
-};
+  const handleCloseModal = () => {
+    setTokenModalOpen(false);
+    setCopied(false);
+  };
 
-const handleCloseModal = () => {
-  setTokenModalOpen(false);
-  setCopied(false);
-};
+  const handleBulkView = (ids) => {
+    console.log("View Selected Devices:", ids);
+    toast.success(`${ids.length} devices selected`);
+  };
+
+  const handleBulkDelete = (ids) => {
+    console.log("Delete Selected Devices:", ids);
+    toast.success(`${ids.length} devices selected for delete`);
+  };
+
   return (
     <>
       <DataTable
@@ -129,9 +129,16 @@ const handleCloseModal = () => {
         showLoadMore
         hasNextPage={hasNextPage}
         onLoadMore={handleLoadMore}
+
+        showCheckboxSelection={true}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+
+        showBulkActions={true}
+        onBulkView={handleBulkView}
+        onBulkDelete={handleBulkDelete}
       />
 
- 
       <Dialog
         open={tokenModalOpen}
         onClose={handleCloseModal}
@@ -142,39 +149,39 @@ const handleCloseModal = () => {
 
         <DialogContent dividers>
           <p className="text-sm text-gray-700 mb-2">
-            Your token has been successfully generated for the device {selectedDeviceId}.
+            Your token has been successfully generated for the device{" "}
+            {selectedDeviceId}.
           </p>
 
-          <p className="text-sm font-semibold text-gray-900 mt-3">
-           Token 
-          </p>
+          <p className="text-sm font-semibold text-gray-900 mt-3">Token</p>
 
           <div className="relative mt-1 bg-gray-100 p-3 rounded text-xs break-all">
-           {token || "Generating..."}
+            {token || "Generating..."}
 
-  {token && (
-    <button
-      onClick={handleCopyToken}
-      className="absolute bottom-2 right-2 text-gray-600 hover:text-black"
-      title="Copy token"
-    >
-      <FiCopy size={16} />
-    </button>
-  )}
-</div>
-{copied && (
-  <p className="mt-1 text-orange-400 text-xs">
-    Token copied successfully
-  </p>
-)}
+            {token && (
+              <button
+                onClick={handleCopyToken}
+                className="absolute bottom-2 right-2 text-gray-600 hover:text-black"
+                title="Copy token"
+              >
+                <FiCopy size={16} />
+              </button>
+            )}
+          </div>
 
+          {copied && (
+            <p className="mt-1 text-orange-400 text-xs">
+              Token copied successfully
+            </p>
+          )}
         </DialogContent>
-
 
         <DialogActions>
           <Button
-            onClick={() => {handleCloseModal()}}
-          variant="contained"
+            onClick={() => {
+              handleCloseModal();
+            }}
+            variant="contained"
             sx={{ backgroundColor: "#EF9421" }}
           >
             Close
@@ -185,4 +192,4 @@ const handleCloseModal = () => {
   );
 }
 
-export default Users;
+export default Devices;

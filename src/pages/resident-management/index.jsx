@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "../../components/table/dataTable";
 import {
   getResidentDetails,
@@ -9,15 +9,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
 export const headers = [
-  { fieldName: "#", headerName: "#" },
   { fieldName: "name", headerName: "Resident Name" },
   { fieldName: "home", headerName: "Home" },
-  { fieldName: "device", headerName: "Device Serial No" },
   { fieldName: "devicename", headerName: "Device" },
   { fieldName: "emergencyName", headerName: "Emergency Contact Name" },
   { fieldName: "emergencyNumber", headerName: "Emergency Contact Number" },
   { fieldName: "status", headerName: "Status" },
-  { fieldName: "", headerName: "Action" },
 ];
 
 function Resident() {
@@ -26,6 +23,8 @@ function Resident() {
   const { data, loading, hasNextPage, nextCursor } = useSelector(
     (state) => state.resident
   );
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     dispatch(getResidentDetails({ limit: 10 }));
@@ -62,11 +61,9 @@ function Resident() {
       `Resident ${currentStatus ? "deactivated" : "activated"} successfully`
     );
   } catch (error) {
-    toast.error(
-      error?.message || "Failed to update resident status"
-    );
-  }
-};
+    toast.error(error?.message || "Failed to update resident status");
+    }
+  };
 
   const handleLoadMore = () => {
     if (!loading && hasNextPage) {
@@ -77,6 +74,16 @@ function Resident() {
         })
       );
     }
+  };
+
+  const handleBulkView = (ids) => {
+    console.log("View Selected Residents:", ids);
+    toast.success(`${ids.length} residents selected`);
+  };
+
+  const handleBulkDelete = (ids) => {
+    console.log("Delete Selected Residents:", ids);
+    toast.success(`${ids.length} residents selected for delete`);
   };
 
   return (
@@ -94,6 +101,14 @@ function Resident() {
       showLoadMore
       hasNextPage={hasNextPage}
       onLoadMore={handleLoadMore}
+
+      showCheckboxSelection={true}
+      selectedIds={selectedIds}
+      onSelectionChange={setSelectedIds}
+
+      showBulkActions={true}
+      onBulkView={handleBulkView}
+      onBulkDelete={handleBulkDelete}
     />
   );
 }

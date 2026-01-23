@@ -1,29 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "../../components/table/dataTable";
-import { getAlertDetails,updateAlertStatus } from "../../redux/actions/alert-action";
+import { getAlertDetails, updateAlertStatus } from "../../redux/actions/alert-action";
 import { clearAlertState } from "../../redux/slices/alertSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
 export const headers = [
-  { fieldName: "#", headerName: "#" },
   { fieldName: "name", headerName: "Alert Name" },
   { fieldName: "device", headerName: "Device" },
   { fieldName: "threshold", headerName: "Threshold" },
   { fieldName: "message", headerName: "Message" },
   { fieldName: "type", headerName: "Type" },
   { fieldName: "status", headerName: "Status" },
-  { fieldName: "", headerName: "Action" }
 ];
 
-function Users() {
+function Alerts() {
   const dispatch = useDispatch();
-  const {
-    data,
-    loading,
-    hasNextPage,
-    nextCursor
-  } = useSelector((state) => state.alert);
+
+  const { data, loading, hasNextPage, nextCursor } = useSelector(
+    (state) => state.alert
+  );
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
     dispatch(clearAlertState());
@@ -41,54 +39,68 @@ function Users() {
     }
   };
 
-  const tableData = data.map((item, index) => ({
-  _id: item._id,
-  "#": index + 1,
-  name: item.name,
-  device: item.device,
-  threshold: item.threshold,
-  message: item.msg,
-  type: item.notification_type,
-  status: item.status === "active",
-}));
+  const tableData = data.map((item) => ({
+    _id: item._id,
+    name: item.name || "-",
+    device: item.device || "-",
+    threshold: item.threshold || "-",
+    message: item.msg || "-",
+    type: item.notification_type || "-",
+    status: item.status === "active",
+  }));
 
-const handleStatusToggle = async (id, currentStatus) => {
-  try {
-    await dispatch(
-      updateAlertStatus({
-        id,
-        status: currentStatus ? "inactive" : "active",
-      })
-    ).unwrap();
+  const handleStatusToggle = async (id, currentStatus) => {
+    try {
+      await dispatch(
+        updateAlertStatus({
+          id,
+          status: currentStatus ? "inactive" : "active",
+        })
+      ).unwrap();
 
-    toast.success(
-      `Alert ${currentStatus ? "deactivated" : "activated"} successfully`
-    );
-  } catch (error) {
-    toast.error(
-      error?.message || "Failed to update alert status"
-    );
-  }
-};
+      toast.success(
+        `Alert ${currentStatus ? "deactivated" : "activated"} successfully`
+      );
+    } catch (error) {
+      toast.error(error?.message || "Failed to update alert status");
+    }
+  };
 
+  const handleBulkView = (ids) => {
+    console.log("View Selected Alerts:", ids);
+    toast.success(`${ids.length} alerts selected`);
+  };
+
+  const handleBulkDelete = (ids) => {
+    console.log("Delete Selected Alerts:", ids);
+    toast.success(`${ids.length} alerts selected for delete`);
+  };
 
   return (
     <DataTable
       loading={loading}
       headers={headers}
       data={tableData}
-       onStatusToggle={handleStatusToggle}
+      onStatusToggle={handleStatusToggle}
       statusToggle={true}
       title="Alert Listing"
       addButtonLabel="Add Alert"
       addLink="/alert/add"
       editLink="/alert/edit"
       viewLink="/alert/view"
-      showLoadMore
+      showLoadMore={true}
       hasNextPage={hasNextPage}
       onLoadMore={handleLoadMore}
+
+      showCheckboxSelection={true}
+      selectedIds={selectedIds}
+      onSelectionChange={setSelectedIds}
+
+      showBulkActions={true}
+      onBulkView={handleBulkView}
+      onBulkDelete={handleBulkDelete}
     />
   );
 }
 
-export default Users;
+export default Alerts;
