@@ -32,9 +32,6 @@ export const addHomeDetails = createAsyncThunk("home/addHomeDetails", async (bod
   // const token = getAuthToken(getState);
   try {
     const { data } = await client.post(`home`,body)
-    if (!data?.success) {
-      return rejectWithValue(result?.message || "Something went wrong");
-    }
 
     return data?.data;
   } catch (error) {
@@ -46,9 +43,6 @@ export const editHomeDetails = createAsyncThunk("home/editHomeDetails", async (b
   // const token = getAuthToken(getState);
   try {
     const { data } = await client.put(`home/update/`+body._id,body)
-    if (!data?.success) {
-      return rejectWithValue(result?.message || "Something went wrong");
-    }
 
     return data?.data;
   } catch (error) {

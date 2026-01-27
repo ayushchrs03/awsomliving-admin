@@ -44,7 +44,11 @@ export const buildQueryString = (queries = []) =>
     .join("&");
 
 // Common error handler
-export const handleError = (error, rejectWithValue) =>
-  rejectWithValue(
-    error?.response?.data?.message || error?.message || "Unknown error"
+export const handleError = (error, rejectWithValue) => {
+  return rejectWithValue(
+    error?.response?.data?.error_message || 
+    error?.response?.data?.message ||
+    error?.message ||
+    "Unknown error"
   );
+};

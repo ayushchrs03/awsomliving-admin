@@ -21,9 +21,7 @@ client.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 429) {
         toast.error("Too many requests from this IP, please try again later.");
-      } else {
-        toast.error(error.response.data?.message || "Something went wrong.");
-      }
+      } 
     } else if (error.request) {
       toast.error("No response from server. Please check your connection.");
     } else {

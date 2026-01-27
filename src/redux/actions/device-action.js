@@ -71,12 +71,6 @@ export const addDeviceDetails = createAsyncThunk(
     try {
       const { data } = await client.post("devices", body);
 
-      if (!data?.success) {
-        return rejectWithValue(
-          data?.message || "Something went wrong"
-        );
-      }
-
       return data.data;
     } catch (error) {
       return handleError(error, rejectWithValue);
@@ -92,12 +86,6 @@ export const editDeviceDetails = createAsyncThunk(
         `devices/update/${body._id}`,
         body
       );
-
-      if (!data?.success) {
-        return rejectWithValue(
-          data?.message || "Something went wrong"
-        );
-      }
 
       return data.data;
     } catch (error) {

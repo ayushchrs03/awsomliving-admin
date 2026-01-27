@@ -45,10 +45,6 @@ export const addResidentDetails = createAsyncThunk(
         },
       });
 
-      if (!data?.success) {
-        return rejectWithValue(data?.message || "Failed to add alert");
-      }
-
       return data.data;
     } catch (error) {
       return handleError(error, rejectWithValue);
@@ -71,11 +67,6 @@ export const editResidentDetails = createAsyncThunk(
           },
         }
       );
-
-      if (!data?.success) {
-        return rejectWithValue(data?.message || "Failed to update alert");
-      }
-
       return data.data;
     } catch (error) {
       return handleError(error, rejectWithValue);

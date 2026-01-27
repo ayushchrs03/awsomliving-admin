@@ -45,9 +45,6 @@ export const addAlertDetails = createAsyncThunk(
         },
       });
 
-      if (!data?.success) {
-        return rejectWithValue(data?.message || "Failed to add alert");
-      }
 
       return data.data;
     } catch (error) {
@@ -71,11 +68,6 @@ export const editAlertDetails = createAsyncThunk(
           },
         }
       );
-
-      if (!data?.success) {
-        return rejectWithValue(data?.message || "Failed to update alert");
-      }
-
       return data.data;
     } catch (error) {
       return handleError(error, rejectWithValue);

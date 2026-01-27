@@ -36,9 +36,6 @@ export const addUserDetails = createAsyncThunk("users/addUserDetails", async (bo
   // const token = getAuthToken(getState);
   try {
     const { data } = await client.post(`/user/add`,body)
-    if (!data?.success) {
-      return rejectWithValue(result?.message || "Something went wrong");
-    }
 
     return data?.data;
   } catch (error) {
@@ -50,9 +47,7 @@ export const editUserDetails = createAsyncThunk("users/editUserDetails", async (
   // const token = getAuthToken(getState);
   try {
     const { data } = await client.put(`/user/update/`+body._id,body)
-    if (!data?.success) {
-      return rejectWithValue(result?.message || "Something went wrong");
-    }
+ 
 
     return data?.data;
   } catch (error) {

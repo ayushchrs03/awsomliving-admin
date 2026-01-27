@@ -92,7 +92,7 @@ const UserForm = ({ mode }) => {
 
   useEffect(() => {
     if (error && (isAdd || isEdit)) {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(error);
     }
   }, [error, isAdd, isEdit]);
 
