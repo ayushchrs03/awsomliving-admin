@@ -33,7 +33,7 @@ function StatCard({
       </p>
 
       <p className="text-3xl font-semibold text-gray-900 mt-2">
-        {value}
+        {value === "No data found" ? "N/A" :value}
       </p>
 
       <p className={`text-sm mt-3 flex items-center gap-1 ${changeColor}`}>
