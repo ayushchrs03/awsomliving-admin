@@ -15,23 +15,6 @@ import {
   Cell,
 } from "recharts";
 
-const ackResolvedTrend = [
-  { date: "Week 1", acknowledged: 245, resolved: 220 },
-  { date: "Week 2", acknowledged: 312, resolved: 285 },
-  { date: "Week 3", acknowledged: 278, resolved: 256 },
-  { date: "Week 4", acknowledged: 356, resolved: 332 },
-  { date: "Week 5", acknowledged: 298, resolved: 275 },
-  { date: "Week 6", acknowledged: 324, resolved: 310 },
-];
-
-const responseTimeData = [
-  { range: "<5 min", count: 1840, color: "#22c55e" },
-  { range: "5-15 min", count: 920, color: "#84cc16" },
-  { range: "15-30 min", count: 420, color: "#f59e0b" },
-  { range: "30-60 min", count: 180, color: "#f97316" },
-  { range: ">60 min", count: 85, color: "#ef4444" },
-];
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -46,7 +29,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export function AlertLogModule() {
+export function AlertLogModule({ ackResolvedTrend,responseTimeData }) {
   return (
     <div className="pt-4 sm:pt-6">
       <PageHeader

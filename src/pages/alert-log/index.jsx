@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DataTable from "../../components/table/dataTable";
 
 export const headers = [
-  { fieldName: "#", headerName: "#" },
   { fieldName: "userName", headerName: "User Name" },
   { fieldName: "home", headerName: "Home" },
   { fieldName: "resident", headerName: "Resident" },
@@ -10,8 +9,7 @@ export const headers = [
   { fieldName: "emergencyNumber", headerName: "Emergency Contact Number" },
   { fieldName: "alertMessage", headerName: "Alert Message" },
   { fieldName: "alertType", headerName: "Alert Type" },
-  { fieldName: "alertStatus", headerName: "Alert Status" },
-  { fieldName: "", headerName: "Action" }
+  { fieldName: "status", headerName: "Status" },
 ];
 
 const tableData = [

@@ -12,23 +12,6 @@ import {
   Cell,
 } from "recharts";
 
-const residentPerHomeData = [
-  { range: "1", count: 820, color: "#3b82f6" },
-  { range: "2", count: 645, color: "#22c55e" },
-  { range: "3", count: 312, color: "#f59e0b" },
-  { range: "4", count: 120, color: "#a855f7" },
-  { range: "5+", count: 59, color: "#ef4444" },
-];
-
-const ageGroupData = [
-  { age: "60-65", count: 420, color: "#0ea5e9" },
-  { age: "66-70", count: 580, color: "#22c55e" },
-  { age: "71-75", count: 720, color: "#6366f1" },
-  { age: "76-80", count: 540, color: "#f97316" },
-  { age: "81-85", count: 380, color: "#a855f7" },
-  { age: "86+", count: 210, color: "#ef4444" },
-];
-
 const noActivityData = [
   { category: "0-24 hrs", count: 45, color: "#22c55e" },
   { category: "24-48 hrs", count: 23, color: "#f59e0b" },
@@ -49,7 +32,10 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export function ResidentModule() {
+export function ResidentModule({
+  residentPerHomeData,
+  ageGroupData,
+}) {
   return (
     <div className="pt-4 sm:pt-6">
       <PageHeader

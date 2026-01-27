@@ -155,25 +155,75 @@ useEffect(() => {
 
       <div>
         {isView ? (
-          <>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Alert Information
-            </h2>
+        <div>
+    <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+      Alert Details
+    </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <InfoTile label="Alert Name" value={formData.name || "-"} />
-              <InfoTile label="Device" value={selectedDeviceLabel || "-"} />
-              <InfoTile label="Threshold" value={formData.threshold || "-"} />
-              <InfoTile label="Message" value={formData.msg || "-"} />
-              <InfoTile
-                label="Notification Type"
-                value={notificationTypeLabel}
-              />
-            </div>
-          </>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-lg">
+            {formData.name?.charAt(0) || "A"}
+          </div>
+
+          <div>
+            <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+              {formData.name || "—"}
+            </h2>
+            <p className="text-[14px] leading-[14px] text-gray-500">
+              Device: {selectedDeviceLabel || "—"}
+            </p>
+          </div>
+        </div>
+
+        <span className="text-sm text-green-600 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          Active
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+            T
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Threshold</p>
+            <p className="text-sm text-gray-900">{formData.threshold || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+            M
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Message</p>
+            <p className="text-sm text-gray-900">{formData.msg || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600 font-bold">
+            N
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">
+              Notification Type
+            </p>
+            <p className="text-sm text-gray-900">
+              {notificationTypeLabel || "—"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
         ) : (
           <>
-            <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New User" : "Edit User"}
+            <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New Alert" : "Edit Alert"}
 </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <FormField

@@ -178,226 +178,167 @@ const HomeForm = ({ mode }) => {
     }));
   };
 
-  return (
-    <div>
-  <Breadcrumb
-    items={[
-      { label: "Home", path: "/home" },
-      { label: title },
-    ]}
-  />
+return (
+  <div>
+    <Breadcrumb
+      items={[
+        { label: "Home", path: "/home" },
+        { label: title },
+      ]}
+    />
 
-    <div>
+    {isView ? (
       <div>
-        <div>
-        
+        <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+          Home Details
+        </p>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-lg">
+                {formData.home_name?.charAt(0) || "H"}
+              </div>
 
-          {isView ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <InfoTile label="User" value={selectedUserLabel || "-"} />
-              <InfoTile label="Home Name" value={formData.home_name || "-"} />
+              <div>
+                <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+                  {formData.home_name || "—"}
+                </h2>
+                <p className="text-[14px] leading-[14px] text-gray-500">
+                  Assigned User: {selectedUserLabel || "—"}
+                </p>
+              </div>
             </div>
-          ) : (
-            
-            <>
-             <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New Home" : "Edit Home"}
-</p>
-          <div className="bg-[#ffffff]">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 px-2">
-            Basic Information
-          </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <FormField
-                label="Select User"
-                name="userId"
-                type="select"
-                value={formData.userId}
-                options={userOptions}
-                onChange={(e) => onChangeField("userId", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.userId}
-              />
 
-              <FormField
-                label="Add Home Name"
-                name="home_name"
-                value={formData.home_name}
-                onChange={(e) => onChangeField("home_name", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.home_name}
-              />
-            </div>
-            </div>
-            </>
-
-          )}
+            {/* Status */}
+            <span className="text-sm text-green-600 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              Active
+            </span>
+          </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 px-2">
+        {/* Resident Details */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
             Resident Details
           </h3>
 
-          {isView ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <InfoTile label="Resident Name" value={formData.residentName || "-"} />
-              <InfoTile label="Resident Email" value={formData.email || "-"} />
-              <InfoTile label="Resident Number" value={formData.phone || "-"} />
-              <InfoTile label="Resident Age" value={formData.age || "-"} />
-              <InfoTile label="Resident Gender" value={formData.gender || "-"} />
-              <InfoTile
-                label="Emergency Contact Name"
-                value={formData.emergency_con_name || "-"}
-              />
-              <InfoTile
-                label="Emergency Contact Number"
-                value={formData.emergency_con_num || "-"}
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+                R
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">
+                  Resident Name
+                </p>
+                <p className="text-sm text-gray-900">
+                  {formData.residentName || "—"}
+                </p>
+              </div>
             </div>
-          ) : (
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <FormField
-                label="Resident Name"
-                name="residentName"
-                value={formData.residentName}
-                onChange={(e) => onChangeField("residentName", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.residentName}
-              />
 
-              <FormField
-                label="Resident Email"
-                name="email"
-                value={formData.email}
-                onChange={(e) => onChangeField("email", e.target.value)}
-                rules={[{ type: "required" }, { type: "email" }]}
-                error={errors.email}
-              />
-
-              <FormField
-                label="Resident Number"
-                name="phone"
-                type="text"
-                value={formData.phone}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (allowOnlyTenDigits(value)) {
-                    onChangeField("phone", value);
-                  }
-                }}
-                rules={[{ type: "required" }, { type: "length", value: 10 }]}
-                error={errors.phone}
-              />
-
-              <FormField
-                label="Resident Age"
-                name="age"
-                type="number"
-                value={formData.age}
-                onChange={(e) => onChangeField("age", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.age}
-              />
-
-              <FormField
-                label="Resident Gender"
-                name="gender"
-                type="select"
-                value={formData.gender}
-                options={GenderOptions}
-                onChange={(e) => onChangeField("gender", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.gender}
-              />
-
-              <FormField
-                label="Emergency Contact Name"
-                name="emergency_con_name"
-                value={formData.emergency_con_name}
-                onChange={(e) =>
-                  onChangeField("emergency_con_name", e.target.value)
-                }
-                rules={[{ type: "required" }]}
-                error={errors.emergency_con_name}
-              />
-
-              <FormField
-                label="Emergency Contact Number"
-                name="emergency_con_num"
-                type="text"
-                value={formData.emergency_con_num}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (allowOnlyTenDigits(value)) {
-                    onChangeField("emergency_con_num", value);
-                  }
-                }}
-                rules={[{ type: "required" }, { type: "length", value: 10 }]}
-                error={errors.emergency_con_num}
-              />
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                @
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Email</p>
+                <p className="text-sm text-gray-900">
+                  {formData.email || "—"}
+                </p>
+              </div>
             </div>
-          )}
+
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600 font-bold">
+                ☎
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Phone</p>
+                <p className="text-sm text-gray-900">
+                  {formData.phone || "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 font-bold">
+                A
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Age</p>
+                <p className="text-sm text-gray-900">{formData.age || "—"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-pink-100 flex items-center justify-center text-pink-600 font-bold">
+                G
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Gender</p>
+                <p className="text-sm text-gray-900">
+                  {formData.gender || "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold">
+                E
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">
+                  Emergency Contact
+                </p>
+                <p className="text-sm text-gray-900">
+                  {formData.emergency_con_name || "—"}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.emergency_con_num || "—"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 px-2">Device Setup</h3>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
+            Device Setup
+          </h3>
 
-          {isView ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <InfoTile label="Device Type" value={formData.deviceType || "-"} />
-              <InfoTile
-                label={
-                  formData.deviceType === "Emfit"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+                D
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Device Type</p>
+                <p className="text-sm text-gray-900">
+                  {formData.deviceType || "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+                #
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">
+                  {formData.deviceType === "Emfit"
                     ? "SR Number"
                     : formData.deviceType === "Eltum"
                     ? "Camera ID"
-                    : "Device Value"
-                }
-                value={formData.deviceValue || "-"}
-              />
-            </div>
-          ) : (
-            <div className="w-full md:w-1/2">
-              <div className="flex gap-6 mb-4 px-2">
-                <label className="flex items-center gap-2 text-black">
-                  <input
-                    type="checkbox"
-                    className="accent-orange-500 scale-150"
-                    checked={formData.deviceType === "Emfit"}
-                    onChange={() => handleDeviceSelect("Emfit")}
-                    disabled={isView}
-                  />
-                  Emfit
-                </label>
-
-                <label className="flex items-center gap-2 text-black">
-                  <input
-                    type="checkbox"
-                    className="accent-orange-500 scale-150"
-                    checked={formData.deviceType === "Eltum"}
-                    onChange={() => handleDeviceSelect("Eltum")}
-                    disabled={isView}
-                  />
-                  Altum
-                </label>
+                    : "Device Value"}
+                </p>
+                <p className="text-sm text-gray-900">
+                  {formData.deviceValue || "—"}
+                </p>
               </div>
-
-              {formData.deviceType && (
-                <FormField
-                  label={
-                    formData.deviceType === "Emfit"
-                      ? "Enter SR Number"
-                      : "Enter Camera ID"
-                  }
-                  name="deviceValue"
-                  value={formData.deviceValue}
-                  onChange={(e) => onChangeField("deviceValue", e.target.value)}
-                  rules={[{ type: "required" }]}
-                  error={errors.deviceValue}
-                />
-              )}
             </div>
-          )}
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
@@ -405,23 +346,196 @@ const HomeForm = ({ mode }) => {
             onClick={() => navigate(-1)}
             className="px-5 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
           >
-            {isView ? "Back" : "Cancel"}
+            Back
           </button>
-
-          {!isView && (
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-2 rounded-md bg-[#EF9421] text-white hover:opacity-90 transition"
-            >
-              {loading ? "Saving..." : buttonLabel}
-            </button>
-          )}
         </div>
       </div>
-    </div>
-    </div>
-  );
+    ) : (
+      <div>
+        <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+          {isAdd ? "Add New Home" : "Edit Home"}
+        </p>
+
+        <div className="bg-[#ffffff]">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 px-2">
+            Basic Information
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <FormField
+              label="Select User"
+              name="userId"
+              type="select"
+              value={formData.userId}
+              options={userOptions}
+              onChange={(e) => onChangeField("userId", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.userId}
+            />
+
+            <FormField
+              label="Add Home Name"
+              name="home_name"
+              value={formData.home_name}
+              onChange={(e) => onChangeField("home_name", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.home_name}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 px-2">
+            Resident Details
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <FormField
+              label="Resident Name"
+              name="residentName"
+              value={formData.residentName}
+              onChange={(e) => onChangeField("residentName", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.residentName}
+            />
+
+            <FormField
+              label="Resident Email"
+              name="email"
+              value={formData.email}
+              onChange={(e) => onChangeField("email", e.target.value)}
+              rules={[{ type: "required" }, { type: "email" }]}
+              error={errors.email}
+            />
+
+            <FormField
+              label="Resident Number"
+              name="phone"
+              type="text"
+              value={formData.phone}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (allowOnlyTenDigits(value)) {
+                  onChangeField("phone", value);
+                }
+              }}
+              rules={[{ type: "required" }, { type: "length", value: 10 }]}
+              error={errors.phone}
+            />
+
+            <FormField
+              label="Resident Age"
+              name="age"
+              type="number"
+              value={formData.age}
+              onChange={(e) => onChangeField("age", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.age}
+            />
+
+            <FormField
+              label="Resident Gender"
+              name="gender"
+              type="select"
+              value={formData.gender}
+              options={GenderOptions}
+              onChange={(e) => onChangeField("gender", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.gender}
+            />
+
+            <FormField
+              label="Emergency Contact Name"
+              name="emergency_con_name"
+              value={formData.emergency_con_name}
+              onChange={(e) => onChangeField("emergency_con_name", e.target.value)}
+              rules={[{ type: "required" }]}
+              error={errors.emergency_con_name}
+            />
+
+            <FormField
+              label="Emergency Contact Number"
+              name="emergency_con_num"
+              type="text"
+              value={formData.emergency_con_num}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (allowOnlyTenDigits(value)) {
+                  onChangeField("emergency_con_num", value);
+                }
+              }}
+              rules={[{ type: "required" }, { type: "length", value: 10 }]}
+              error={errors.emergency_con_num}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 px-2">
+            Device Setup
+          </h3>
+
+          <div className="w-full md:w-1/2">
+            <div className="flex gap-6 mb-4 px-2">
+              <label className="flex items-center gap-2 text-black">
+                <input
+                  type="checkbox"
+                  className="accent-orange-500 scale-150"
+                  checked={formData.deviceType === "Emfit"}
+                  onChange={() => handleDeviceSelect("Emfit")}
+                />
+                Emfit
+              </label>
+
+              <label className="flex items-center gap-2 text-black">
+                <input
+                  type="checkbox"
+                  className="accent-orange-500 scale-150"
+                  checked={formData.deviceType === "Eltum"}
+                  onChange={() => handleDeviceSelect("Eltum")}
+                />
+                Altum
+              </label>
+            </div>
+
+            {formData.deviceType && (
+              <FormField
+                label={
+                  formData.deviceType === "Emfit"
+                    ? "Enter SR Number"
+                    : "Enter Camera ID"
+                }
+                name="deviceValue"
+                value={formData.deviceValue}
+                onChange={(e) => onChangeField("deviceValue", e.target.value)}
+                rules={[{ type: "required" }]}
+                error={errors.deviceValue}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="px-5 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-6 py-2 rounded-md bg-[#EF9421] text-white hover:opacity-90 transition"
+          >
+            {loading ? "Saving..." : buttonLabel}
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default HomeForm;

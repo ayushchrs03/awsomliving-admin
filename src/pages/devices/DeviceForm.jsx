@@ -134,24 +134,97 @@ const DeviceForm = ({ mode }) => {
 
       <div className="p-8 space-y-10 w-full">
         {isView ? (
-          <>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Device Information
+         <div>
+    <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+      Device Details
+    </p>
+
+    {/* Device Main Card */}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          {/* Device Avatar */}
+          <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-lg">
+            {formData.type?.charAt(0) || "D"}
+          </div>
+
+          {/* Device Type + Resident */}
+          <div>
+            <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+              {formData.type || "—"}
             </h2>
+            <p className="text-[14px] leading-[14px] text-gray-500">
+              Assigned Resident: {selectedResidentLabel || "—"}
+            </p>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <InfoTile label="Resident" value={selectedResidentLabel || "-"} />
-              <InfoTile label="Device Type" value={formData.type || "-"} />
+        {/* Status */}
+        <span className="text-sm text-green-600 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          Active
+        </span>
+      </div>
 
-              {formData.type === "Eltum" && (
-                <InfoTile label="Camera ID" value={formData.camera_id || "-"} />
-              )}
+      {/* Device Info Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        {/* Resident */}
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+            R
+          </div>
 
-              {formData.type === "Emfit" && (
-                <InfoTile label="SR Number" value={formData.sr_num || "-"} />
-              )}
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Resident</p>
+            <p className="text-sm text-gray-900">
+              {selectedResidentLabel || "—"}
+            </p>
+          </div>
+        </div>
+
+        {/* Device Type */}
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+            D
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Device Type</p>
+            <p className="text-sm text-gray-900">{formData.type || "—"}</p>
+          </div>
+        </div>
+
+        {/* Camera ID / SR */}
+        {formData.type === "Eltum" && (
+          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+              C
             </div>
-          </>
+
+            <div>
+              <p className="text-xs text-gray-500 font-medium">Camera ID</p>
+              <p className="text-sm text-gray-900">
+                {formData.camera_id || "—"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {formData.type === "Emfit" && (
+          <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600 font-bold">
+              #
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 font-medium">SR Number</p>
+              <p className="text-sm text-gray-900">{formData.sr_num || "—"}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
         ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <FormField

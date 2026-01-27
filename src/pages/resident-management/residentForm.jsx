@@ -208,60 +208,171 @@ useEffect(() => {
 
       <div>
         {isView ? (
-          <>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                Basic Information
-              </h2>
+       <div>
+    <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+      Resident Details
+    </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <InfoTile label="Resident Name" value={formData.name || "-"} />
-                <InfoTile label="Resident Age" value={formData.age || "-"} />
-                <InfoTile
-                  label="Resident Contact Number"
-                  value={formData.phone || "-"}
-                />
-                <InfoTile
-                  label="Resident Gender"
-                  value={formData.gender || "-"}
-                />
-                <InfoTile
-                  label="Emergency Contact Name"
-                  value={formData.emergency_con_name || "-"}
-                />
-                <InfoTile
-                  label="Emergency Contact Number"
-                  value={formData.emergency_con_num || "-"}
-                />
-                <InfoTile label="Email" value={formData.email || "-"} />
-              </div>
-            </div>
+    {/* Resident Main Card */}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          {/* Resident Avatar */}
+          <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-lg">
+            {formData.name?.charAt(0) || "R"}
+          </div>
 
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                Assignment
-              </h2>
+          {/* Name + Email */}
+          <div>
+            <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+              {formData.name || "—"}
+            </h2>
+            <p className="text-[14px] leading-[14px] text-gray-500">
+              {formData.email || "—"}
+            </p>
+          </div>
+        </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <InfoTile label="User" value={selectedUserLabel || "-"} />
-                <InfoTile label="Home" value={selectedHomeLabel || "-"} />
-              </div>
-            </div>
+        {/* Status */}
+        <span className="text-sm text-green-600 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          Active
+        </span>
+      </div>
 
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                Device Setup
-              </h2>
+      {/* Quick Info */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600 font-bold">
+            ☎
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Contact Number</p>
+            <p className="text-sm text-gray-900">{formData.phone || "—"}</p>
+          </div>
+        </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <InfoTile label="Device Type" value={deviceTypeLabel || "-"} />
-                <InfoTile
-                  label="Device Value"
-                  value={formData.deviceValue || "-"}
-                />
-              </div>
-            </div>
-          </>
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 font-bold">
+            A
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Age</p>
+            <p className="text-sm text-gray-900">{formData.age || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-pink-100 flex items-center justify-center text-pink-600 font-bold">
+            G
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Gender</p>
+            <p className="text-sm text-gray-900">{formData.gender || "—"}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Emergency Contact */}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <h3 className="text-base font-semibold text-gray-900 mb-4">
+        Emergency Contact
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold">
+            E
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">
+              Emergency Contact Name
+            </p>
+            <p className="text-sm text-gray-900">
+              {formData.emergency_con_name || "—"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold">
+            ☎
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">
+              Emergency Contact Number
+            </p>
+            <p className="text-sm text-gray-900">
+              {formData.emergency_con_num || "—"}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <h3 className="text-base font-semibold text-gray-900 mb-4">
+        Assignment
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
+            U
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">User</p>
+            <p className="text-sm text-gray-900">{selectedUserLabel || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+            H
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Home</p>
+            <p className="text-sm text-gray-900">{selectedHomeLabel || "—"}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Device Setup */}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <h3 className="text-base font-semibold text-gray-900 mb-4">
+        Device Setup
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+            D
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Device Type</p>
+            <p className="text-sm text-gray-900">{deviceTypeLabel || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center text-gray-700 font-bold">
+            #
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Device Value</p>
+            <p className="text-sm text-gray-900">
+              {formData.deviceValue || "—"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
         ) : (
           <>
             <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New Resident " : "Edit Resident "}

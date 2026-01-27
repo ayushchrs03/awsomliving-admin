@@ -14,19 +14,6 @@ import {
   Cell,
 } from "recharts";
 
-const rulesByType = [
-  { type: "Fall Detection", count: 1240, color: "#3b82f6" },
-  { type: "Inactivity", count: 980, color: "#22c55e" },
-  { type: "Abnormal Patterns", count: 640, color: "#f59e0b" },
-  { type: "Door/Entry", count: 420, color: "#a855f7" },
-  { type: "Temperature", count: 280, color: "#ef4444" },
-];
-
-const rulesByStatus = [
-  { name: "Active", value: 2840, color: "#22c55e" },
-  { name: "Disabled", value: 720, color: "orange" },
-];
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -41,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export function AlertModule() {
+export function AlertModule({ rulesByType, rulesByStatus }) {
   return (
     <div className="pt-4 sm:pt-6">
       <PageHeader

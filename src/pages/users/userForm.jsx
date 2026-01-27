@@ -13,7 +13,11 @@ import { FaHome, FaUser } from "react-icons/fa";
 import InfoTile from "../../components/formField/infoTile";
 import Breadcrumb from "../../components/formField/breadcrumb";
 import { FaPhoneAlt } from "react-icons/fa";
-
+import { CiMail } from "react-icons/ci";
+import { FiHome } from "react-icons/fi";
+import { HiDotsVertical } from "react-icons/hi";
+import { FaMicrochip } from "react-icons/fa";
+import {capitalizer} from "../../components/formField/capitalizer"
 import { clearDetails } from "../../redux/slices/userSlice";
 
 import {
@@ -139,155 +143,199 @@ const UserForm = ({ mode }) => {
       <div >
     
         {isView ? (
-          <div className="space-y-4">
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-5 flex items-center justify-between">
-              
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
-                  <FaUser size={18} />
-                </div>
+           <div >
+  
+      <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6"> User Details
+</p>
+    {/* Main Card */}
 
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-semibold text-gray-900">
-                      {formData.first_name} {formData.last_name}
-                    </h2>
+     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+      <div className="flex items-start justify-between ">
+        <div className="flex items-center gap-4">
+          {/* Avatar */}
+          <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-[#FFFFFF] uppercase font-bold text-lg">
+            {formData.first_name?.charAt(0) || "U"}
+          </div>
 
-                    <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
-                      ACTIVE
-                    </span>
+          {/* Name + Email */}
+          <div>
+            <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+              {capitalizer(`${formData.first_name} ${formData.last_name}`)}
+
+            </h2>
+            <p className="text-[14px] leading-[14px] text-gray-500">{formData.email || "—"}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-green-600 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500" />
+            Active
+          </span>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="text-[#EF9421] text-xl font-bold"
+          >
+            <HiDotsVertical />
+          </button>
+        </div>
+      </div>
+
+
+      <div className="grid grid-cols-3 sm:grid-cols-3 gap-4 mt-6">
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+            <FaPhoneAlt size={16} />
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Contact Number</p>
+            <p className="text-sm  text-gray-900">
+              {formData.phone || "—"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+            <CiMail  />
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Email</p>
+            <p className="text-sm  text-gray-900">
+              {formData.email || "—"}
+            </p>
+          </div>
+        </div>
+
+        {/* Last Login */}
+        {/* <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+            🕒
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-medium">Last Login</p>
+            <p className="text-sm font-semibold text-gray-900">
+              {details?.last_login || "—"}
+            </p>
+          </div>
+        </div> */}
+      </div>
+      </div>
+
+    
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+
+      <div>
+        <h3 className="text-base font-semibold text-gray-900 mb-3">
+          Home Details
+        </h3>
+
+       {homes.length > 0 ? (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {homes.map((home) => (
+      <div
+        key={home._id}
+        onClick={() => handleHomeView(home._id)}
+        className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm cursor-pointer transition"
+      >
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center uppercase font-bold text-orange-600">
+            {home?.name?.charAt(0) || "H"}
+          </div>
+
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-gray-900">
+              {capitalizer(home?.name) || "Home"}
+            </p>
+
+            <p className="text-xs text-gray-500">
+              {home?.connected_devices
+                ? `${home.connected_devices} Devices`
+                : "—"}
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 space-y-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <FiHome className="text-[#4D4D4D]" size={12} />
+            <p className="text-xs">
+              {home?.connected_devices
+                ? `${home.connected_devices} Connected Devices`
+                : "—"}
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="text-sm text-gray-500">No homes assigned.</p>
+)}
+
+
+      </div>
+      </div>
+
+    
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+
+      <div>
+        <h3 className="text-base font-semibold text-gray-900 mb-3">
+          Resident Details
+        </h3>
+
+        {residents.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {residents.map((resident) => (
+              <div
+                key={resident._id}
+                onClick={() => handleResidentView(resident._id)}
+                className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm cursor-pointer transition"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#F0FFF7] flex items-center justify-center uppercase font-bold text-[#000000]">
+                    {resident?.name?.charAt(0) || "R"}
                   </div>
 
-                  <p className="text-sm text-gray-500 mt-1">
-                    {homes.length} Homes • {residents.length} Residents
-                  </p>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {capitalizer(resident?.name) || "Resident"}
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      {resident?.age ? `${resident.age} Year` : "—"}
+                      {resident?.gender ? `, ${resident.gender}` : ""}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Resident Contact */}
+                <div className="mt-4 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#4D4D4D]"><CiMail/></span>
+                    <p className="text-xs">{resident?.email || "—"}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <FaPhoneAlt className="text-[#4D4D4D]" size={12} />
+                    <p className="text-xs">{resident?.phone || "—"}</p>
+                  </div>
                 </div>
               </div>
-
-              <div className="text-right">
-                <p className="text-xs text-gray-400 font-semibold uppercase">
-                  Primary Email
-                </p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {formData.email} 
-                </p>
-              </div>
-            </div>
-
-            {homes.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-700">Homes</h2>
-                  <p className="text-sm text-gray-500">
-                    Total: {homes.length}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {homes.map((home, index) => (
-                    <div
-                      key={home._id}
-                      onClick={() => handleHomeView(home._id)}
-                      className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md transition"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                            <FaHome size={16} />
-                          </div>
-
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {home.name || `Home ${index + 1}`}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              Home {index + 1}
-                            </p>
-                          </div>
-                        </div>
-
-                        <button className="text-gray-400 hover:text-gray-600">
-                          ⋮
-                        </button>
-                      </div>
-
-                      <p className="text-sm font-medium text-orange-600 mt-4">
-                        View →
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Residents Section */}
-            {residents.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-700">
-                    Residents
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Total: {residents.length}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {residents.map((resident) => (
-                    <div
-                      key={resident._id}
-                      onClick={() => handleResidentView(resident._id)}
-                      className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md transition"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold">
-                              {resident?.name?.charAt(0) || "R"}
-                            </div>
-
-                            <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                          </div>
-
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {resident.name}
-                            </p>
-
-                            <p className="text-xs text-gray-500">
-                              {/* {resident.age || "--"} Years •{" "} */}
-                              {/* {resident.gender || "--"} */}
-                            </p>
-                          </div>
-                        </div>
-
-                        <button className="text-gray-400 hover:text-gray-600">
-                          ⋮
-                        </button>
-                      </div>
-
-                      <div className="mt-4 space-y-2 text-sm text-gray-600">
-                        <div className="flex items-center gap-2">
-                          {/* <span className="text-gray-400">📞</span> */}
-                          <FaPhoneAlt/>
-                          <p>{resident.phone || "—"}</p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {/* <span className="text-gray-400">✉️</span> */}
-                          {/* <p>{resident.email || "—"}</p> */}
-                        </div>
-                      </div>
-
-                      <p className="text-sm font-medium text-blue-600 mt-4">
-                        View →
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            ))}
           </div>
+        ) : (
+          <p className="text-sm text-gray-500">No residents found.</p>
+        )}
+      </div>
+      </div>
+    </div>
         ) : (
           <>
           <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">  {isAdd ? "Add New User" : "Edit User"}
@@ -340,7 +388,6 @@ const UserForm = ({ mode }) => {
     />
   </div>
 
-  {/* ✅ Buttons now inside card */}
   <div className="flex justify-end gap-3 pt-6 px-2 pb-6">
     <button
       onClick={() => navigate(-1)}

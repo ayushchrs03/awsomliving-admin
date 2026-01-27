@@ -39,85 +39,74 @@ function useInViewLogger(componentName, apiFunction) {
 }
 
 function Dashboard() {
-  const stats = [
-    {
-      label: "Total Users",
-      value: "12,500",
-      change: "↑ 12.5%",
-      icon: FaUsers,
-      bg: "bg-green-100",
-      border: "border-green-200",
-      iconBg: "bg-green-50",
-      iconColor: "text-green-600",
-      changeColor: "text-green-600",
-    },
-    {
-      label: "Total Homes",
-      value: "1,820",
-      change: "↑ 8.2%",
-      icon: FaHome,
-      bg: "bg-blue-100",
-      border: "border-blue-200",
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-600",
-      changeColor: "text-blue-600",
-    },
-    {
-      label: "Total Devices",
-      value: "5,340",
-      change: "↓ 3.1%",
-      icon: FaMicrochip,
-      bg: "bg-purple-100",
-      border: "border-purple-200",
-      iconBg: "bg-purple-50",
-      iconColor: "text-purple-600",
-      changeColor: "text-red-600",
-    },
-    {
-      label: "Active Alerts",
-      value: "12",
-      change: "↑ 1.4%",
-      icon: FaBell,
-      bg: "bg-orange-100",
-      border: "border-orange-200",
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-600",
-      changeColor: "text-green-600",
-    },
-    {
-      label: "Daily Active Users",
-      value: "12,500",
-      change: "↑ 12.5%",
-      icon: FaUsers,
-      bg: "bg-green-100",
-      border: "border-green-200",
-      iconBg: "bg-green-50",
-      iconColor: "text-green-600",
-      changeColor: "text-green-600",
-    },
-    {
-      label: "Active Residents",
-      value: "1,820",
-      change: "↑ 8.2%",
-      icon: FaHome,
-      bg: "bg-blue-100",
-      border: "border-blue-200",
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-600",
-      changeColor: "text-blue-600",
-    },
-    {
-      label: "Avg Session Duration",
-      value: "12",
-      change: "↑ 1.4%",
-      icon: FaBell,
-      bg: "bg-orange-100",
-      border: "border-orange-200",
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-600",
-      changeColor: "text-green-600",
-    },
-  ];
+ 
+  const STAT_UI_CONFIG = {
+  "Total Users": {
+    icon: FaUsers,
+    bg: "bg-green-100",
+    border: "border-green-200",
+    iconBg: "bg-green-50",
+    iconColor: "text-green-600",
+    changeColor: "text-green-600",
+  },
+  "Total Homes": {
+    icon: FaHome,
+    bg: "bg-blue-100",
+    border: "border-blue-200",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    changeColor: "text-blue-600",
+  },
+  "Total Devices": {
+    icon: FaMicrochip,
+    bg: "bg-purple-100",
+    border: "border-purple-200",
+    iconBg: "bg-purple-50",
+    iconColor: "text-purple-600",
+    changeColor: "text-green-600",
+  },
+  "Active Alerts": {
+    icon: FaBell,
+    bg: "bg-orange-100",
+    border: "border-orange-200",
+    iconBg: "bg-orange-50",
+    iconColor: "text-orange-600",
+    changeColor: "text-green-600",
+  },
+  "Active Residents": {
+    icon: FaHome,
+    bg: "bg-blue-100",
+    border: "border-blue-200",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    changeColor: "text-green-600",
+  },
+  "Daily Active Users": {
+    icon: FaUsers,
+    bg: "bg-green-100",
+    border: "border-green-200",
+    iconBg: "bg-green-50",
+    iconColor: "text-green-600",
+    changeColor: "text-gray-400",
+  },
+  "Conversion Rate": {
+    icon: FaUsers,
+    bg: "bg-indigo-100",
+    border: "border-indigo-200",
+    iconBg: "bg-indigo-50",
+    iconColor: "text-indigo-600",
+    changeColor: "text-gray-400",
+  },
+  "Avg Session Duration": {
+    icon: FaBell,
+    bg: "bg-orange-100",
+    border: "border-orange-200",
+    iconBg: "bg-orange-50",
+    iconColor: "text-orange-600",
+    changeColor: "text-gray-400",
+  },
+};
+
 
     const [open, setOpen] = useState(false);
     const [funnelData, setFunnelData] = useState([]);
@@ -126,6 +115,32 @@ function Dashboard() {
     const [noResidentData, setNoResidentData] = useState([]);
     const [onlineOfflineData, setOnlineOfflineData] = useState([]);
     const [ackResolvedTrend, setAckResolvedTrend] = useState([]);
+    const [stats, setStats] = useState([]);
+    const [responseTimeData, setResponseTimeData] = useState([]);
+    const [residentPerHomeData, setResidentPerHomeData] = useState([]);
+    const [ageGroupData, setAgeGroupData] = useState([]);
+    const [rulesByType, setRulesByType] = useState([]);
+    const [rulesByStatus, setRulesByStatus] = useState([]);
+    const [homeGrowthData, setHomeGrowthData] = useState([]);
+    const [activeInactiveHomes, setActiveInactiveHomes] = useState([]);
+
+const runDashboardStatsApi = async () => {
+  try {
+    const { data } = await client.get("dashboard/get-count");
+
+    const formatted = data.data.map(item => ({
+      label: item.label,
+      value: item.value,
+      change: item.change,
+      ...STAT_UI_CONFIG[item.label],
+    }));
+
+    setStats(formatted);
+  } catch (error) {
+    console.error("Dashboard stats API error:", error);
+  }
+};
+
 
 const runUserFunnelPageApi = async () => {
   try {
@@ -165,9 +180,29 @@ const runUserFunnelPageApi = async () => {
 const runHomeModuleApi = async () => {
   try {
     console.log("Running HomeModule API...");
-    const { data } = await client.get("/homes");
-    console.log("HomeModule API Response:", data);
-    return data;
+
+    const [growthRes, statusRes] = await Promise.all([
+      client.get("home/monthly-home-growth"),
+      client.get("home/active-inactive-homes-count"),
+    ]);
+
+    setHomeGrowthData(
+      growthRes.data.data.map(item => ({
+        date: `${item.month} ${item.year}`,
+        users: item.homes,   // keep key as `users` (chart already expects it)
+      }))
+    );
+
+    setActiveInactiveHomes(
+      statusRes.data.data.map(item => ({
+        name:
+          item.name === "active" ? "Active" : "Inactive",
+        value: item.value,
+        color: item.name === "active" ? "#22c55e" : "orange",
+      }))
+    );
+
+    return true;
   } catch (error) {
     console.error("HomeModule API Error:", error);
   }
@@ -177,13 +212,43 @@ const runHomeModuleApi = async () => {
 const runResidentModuleApi = async () => {
   try {
     console.log("Running ResidentModule API...");
-    const { data } = await client.get("/residents");
-    console.log("ResidentModule API Response:", data);
-    return data;
+
+    const { data } = await client.get("dashboard/resident-analytics");
+
+    setResidentPerHomeData(
+      data.data.resident_per_home_data.map(item => ({
+        range: item.range,
+        count: item.count,
+        color:
+          item.range === "1" ? "#3b82f6" :
+          item.range === "2" ? "#22c55e" :
+          item.range === "3" ? "#f59e0b" :
+          item.range === "4" ? "#a855f7" :
+          "#ef4444",
+      }))
+    );
+
+    setAgeGroupData(
+      data.data.age_group_data.map(item => ({
+        age: item.age,
+        count: item.count,
+        color:
+          item.age === "18-59" ? "#0ea5e9" :
+          item.age === "60-65" ? "#22c55e" :
+          item.age === "66-70" ? "#22c55e" :
+          item.age === "71-75" ? "#6366f1" :
+          item.age === "76-80" ? "#f97316" :
+          item.age === "81-85" ? "#a855f7" :
+          "#ef4444",
+      }))
+    );
+
+    return true;
   } catch (error) {
     console.error("ResidentModule API Error:", error);
   }
 };
+
 const runDeviceModuleApi = async () => {
   try {
     console.log("Running DeviceModule API...");
@@ -212,9 +277,36 @@ const runDeviceModuleApi = async () => {
 const runAlertModuleApi = async () => {
   try {
     console.log("Running AlertModule API...");
-    const { data } = await client.get("/alerts");
-    console.log("AlertModule API Response:", data);
-    return data;
+
+    const { data } = await client.get(
+      "dashboard/alert-analytics"
+    );
+
+    setRulesByType(
+      data.data.rules_by_type.map((item, index) => ({
+        type: item.type,
+        count: item.count,
+        color: [
+          "#3b82f6",
+          "#22c55e",
+          "#f59e0b",
+          "#a855f7",
+          "#ef4444",
+          "#0ea5e9",
+          "#6366f1",
+        ][index % 7],
+      }))
+    );
+
+    setRulesByStatus(
+      data.data.rules_by_status.map(item => ({
+        name: item.name,
+        value: item.value,
+        color: item.name === "Active" ? "#22c55e" : "orange",
+      }))
+    );
+
+    return true;
   } catch (error) {
     console.error("AlertModule API Error:", error);
   }
@@ -224,14 +316,44 @@ const runAlertModuleApi = async () => {
 const runAlertLogModuleApi = async () => {
   try {
     console.log("Running AlertLogModule API...");
-    const { data } = await client.get("/alert-logs");
-    console.log("AlertLogModule API Response:", data);
-    return data;
+
+    const [ackRes, responseTimeRes] = await Promise.all([
+      client.get("alert-logs/ack-resolved-trend"),
+      client.get("alert-logs/response-time"),
+    ]);
+
+    setAckResolvedTrend(
+      ackRes.data.data.map(item => ({
+        date: item.date,
+        acknowledged: item.acknowledged,
+        resolved: item.resolved,
+      }))
+    );
+
+    setResponseTimeData(
+      responseTimeRes.data.data.map(item => ({
+        range: item.range,
+        count: item.count,
+        color:
+          item.range === "<5 min" ? "#22c55e" :
+          item.range === "5-15 min" ? "#84cc16" :
+          item.range === "15-30 min" ? "#f59e0b" :
+          item.range === "30-60 min" ? "#f97316" :
+          "#ef4444",
+      }))
+    );
+
+    return true;
   } catch (error) {
     console.error("AlertLogModule API Error:", error);
   }
 };
 
+
+
+useEffect(() => {
+  runDashboardStatsApi();
+}, []);
 
   const funnelRef = useInViewLogger("UserFunnelPage", runUserFunnelPageApi);
   const userModuleRef = useInViewLogger("UserModule", runUserModuleApi);
@@ -255,15 +377,15 @@ const runAlertLogModuleApi = async () => {
         </button>
       </div>
 
-      <div className="pt-4 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-4 w-max pb-2 snap-x snap-mandatory">
-          {stats.map((item, index) => (
-            <div key={index} className="snap-start shrink-0 gap-4">
-              <StatCard {...item} />
-            </div>
-          ))}
-        </div>
+     <div className="pt-4 overflow-x-auto scrollbar-hide">
+  <div className="flex gap-4 w-max pb-2 snap-x snap-mandatory">
+    {stats.map((item, index) => (
+      <div key={index} className="snap-start shrink-0 gap-4">
+        <StatCard {...item} />
       </div>
+    ))}
+  </div>
+</div>
       <div ref={funnelRef}>
         <UserFunnelPage data={funnelData}  />
       </div>
@@ -275,19 +397,28 @@ const runAlertLogModuleApi = async () => {
   />
       </div>
       <div ref={homeModuleRef}>
-        <HomeModule />
+       <HomeModule
+  homeGrowthData={homeGrowthData}
+  activeInactiveData={activeInactiveHomes}
+/>
       </div>
       <div ref={residentModuleRef}>
-        <ResidentModule />
+        <ResidentModule 
+          residentPerHomeData={residentPerHomeData}
+  ageGroupData={ageGroupData}/>
       </div>
       <div ref={deviceModuleRef}>
   <DeviceModule onlineOfflineData={onlineOfflineData} />
       </div>
       <div ref={alertModuleRef}>
-        <AlertModule />
+       <AlertModule
+  rulesByType={rulesByType}
+  rulesByStatus={rulesByStatus}
+/>
       </div>
       <div ref={alertLogModuleRef}>
-        <AlertLogModule />
+        <AlertLogModule ackResolvedTrend={ackResolvedTrend}
+  responseTimeData={responseTimeData} />
       </div>
        {open && <SetupWizardModal onClose={() => setOpen(false)} />}
     </div>

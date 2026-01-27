@@ -15,25 +15,6 @@ import {
 } from "recharts";
 import PageHeader from "../../../components/pageHeader";
 
-const userGrowthData = [
-  { date: "Jan", users: 1200 },
-  { date: "Feb", users: 1450 },
-  { date: "Mar", users: 1680 },
-  { date: "Apr", users: 1920 },
-  { date: "May", users: 2340 },
-  { date: "Jun", users: 2780 },
-  { date: "Jul", users: 3100 },
-  { date: "Aug", users: 3450 },
-  { date: "Sep", users: 3890 },
-  { date: "Oct", users: 4200 },
-  { date: "Nov", users: 4580 },
-  { date: "Dec", users: 4892 },
-];
-
-const activeInactiveData = [
-  { name: "Active", value: 3847, color: "#22c55e" },
-  { name: "Inactive", value: 1045, color: "orange" },
-];
 
 const noResidentData = [
   { category: "New Users (<7 days)", count: 156, color: "#3b82f6" },
@@ -41,7 +22,10 @@ const noResidentData = [
   { category: "Churned Users", count: 42, color: "#53C5AC" },
 ];
 
-export function HomeModule() {
+export function HomeModule({
+  homeGrowthData,
+  activeInactiveData,
+}) {
   return (
     <div className="pt-4 sm:pt-6">
          <PageHeader
@@ -56,7 +40,7 @@ export function HomeModule() {
         >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={userGrowthData}>
+              <LineChart data={homeGrowthData}>
                 {/* <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" /> */}
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
