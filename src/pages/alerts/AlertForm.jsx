@@ -11,7 +11,6 @@ import {
   editAlertDetails,
   viewAlertDetails,
 } from "../../redux/actions/alert-action";
-import { getDeviceDetails } from "../../redux/actions/device-action";
 import { toast } from "react-hot-toast";
 
 import { createFieldUpdater, validateForm } from "../../utils/formUtils";
@@ -40,18 +39,15 @@ const AlertForm = ({ mode }) => {
   );
   useEffect(() => {
       dispatch(clearAlertState());
-    dispatch(getDeviceDetails(100));
   }, [dispatch]);
 
   const title = isAdd ? "Add Alert" : isEdit ? "Edit Alert" : "Alert Details";
   const buttonLabel = isAdd ? "Add Alert" : "Save";
 
-  const deviceOptions = devices.map((device) => ({
-    label: `${device.type} - ${device.sr_num || device.camera_id || "N/A"} (${
-      device.resident?.name || "Unknown"
-    })`,
-    value: device._id,
-  }));
+const deviceOptions = [
+  { label: "Altum", value: "altum" },
+  { label: "Emfit", value: "emfit" },
+];
 
   const [formData, setFormData] = useState({
     name: "",
@@ -236,16 +232,15 @@ useEffect(() => {
             />
 
             <FormField
-              label="Device"
-              name="device"
-              type="select"
-              value={formData.device}
-              options={deviceOptions}
-              onChange={(e) => onChangeField("device", e.target.value)}
-              disabled={deviceLoading}
-              rules={[{ type: "required" }]}
-              error={errors.device}
-            />
+  label="Device"
+  name="device"
+  type="select"
+  value={formData.device}
+  options={deviceOptions}
+  onChange={(e) => onChangeField("device", e.target.value)}
+  rules={[{ type: "required" }]}
+  error={errors.device}
+/>
 
             <FormField
               label="Threshold"
