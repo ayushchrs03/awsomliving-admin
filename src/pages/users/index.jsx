@@ -16,7 +16,21 @@ export const headers = [
 
 function Users() {
   const dispatch = useDispatch();
+const [searchText, setSearchText] = useState("");
 
+useEffect(() => {
+  const timer = setTimeout(() => {
+    dispatch(clearUserState());
+    dispatch(
+      getUserDetails({
+        limit: 10,
+        search: searchText,
+      })
+    );
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [searchText, dispatch]);
   const { data, loading, hasNextPage, nextCursor } = useSelector(
     (state) => state.user
   );
@@ -89,25 +103,29 @@ function Users() {
       loading={loading}
       headers={headers}
       data={tableData}
-      statusToggle={true}
-      onStatusToggle={handleStatusToggle}
+  
       title="User Listing"
       addButtonLabel="Add New User"
       addLink="/user/add"
       editLink="/user/edit"
       viewLink="/user/view"
-        showLoadMore={true}
-        hasNextPage={hasNextPage}
-        onLoadMore={handleLoadMore}
+  showLoadMore={true}
+  hasNextPage={hasNextPage}
+  onLoadMore={handleLoadMore}
 
-        showCheckboxSelection={true}
-        selectedIds={selectedIds}
-        onSelectionChange={setSelectedIds}
-        
-        showBulkActions={true}
-        onBulkView={(ids) => console.log("View Selected:", ids)}
-        onBulkDelete={(ids) => console.log("Delete Selected:", ids)}
-      />
+  showCheckboxSelection={true}
+  selectedIds={selectedIds}
+  onSelectionChange={setSelectedIds}
+
+  showBulkActions={true}
+
+  showSearch={true}
+  searchValue={searchText}
+  onSearchChange={setSearchText}
+
+  statusToggle={true}
+  onStatusToggle={handleStatusToggle}
+/>
     </>
   );
 }

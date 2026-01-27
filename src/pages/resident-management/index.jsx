@@ -86,6 +86,25 @@ function Resident() {
     console.log("Delete Selected Residents:", ids);
     toast.success(`${ids.length} residents selected for delete`);
   };
+  
+      const [searchText, setSearchText] = useState("");
+    
+    
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        dispatch(resetResidentList());
+        dispatch(
+          getResidentDetails({
+            limit: 10,
+            search: searchText,
+          })
+        );
+      }, 500);
+    
+      return () => clearTimeout(timer);
+    }, [searchText, dispatch]);
+  
+  
 
   return (
      <>
@@ -113,6 +132,9 @@ function Resident() {
       showBulkActions={true}
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
+       showSearch={true}
+  searchValue={searchText}
+  onSearchChange={setSearchText}
     />
     </>
   );

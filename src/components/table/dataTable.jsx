@@ -263,14 +263,23 @@ const handleAdd =()=>{
               </thead>
 
               <tbody>
-                {data.map((item) => {
+                {data.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={selectable ? headers.length + 1 : headers.length}
+                      className="text-center py-8 text-gray-400"
+                    >
+                      No data found
+                    </td>
+                  </tr>
+                ) : (
+                  data.map((item) => {
                   const checked = selectedIds.includes(item._id);
 
                   return (
                     <tr
                       key={item._id}
-                      className={`border-b border-dashed border-gray-200 dark:border-gray-500 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${
-                        checked ? "bg-orange-50 dark:bg-gray-700/40" : ""
+                      className={`border-b border-dashed border-gray-200 dark:border-gray-500 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 ${checked ? "bg-orange-50 dark:bg-gray-700/40" : ""
                       }`}
                     >
                       {selectable && (
@@ -295,8 +304,7 @@ const handleAdd =()=>{
                                 onClick={() =>
                                   onStatusToggle?.(item._id, item.status)
                                 }
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                  item.status === false
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${item.status === false
                                     ? "bg-red-100 text-red-600"
                                     : "bg-green-100 text-green-600"
                                 }`}
@@ -328,7 +336,8 @@ const handleAdd =()=>{
                       })}
                     </tr>
                   );
-                })}
+                })
+              )}
               </tbody>
             </table>
           </div>

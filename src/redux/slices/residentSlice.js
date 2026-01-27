@@ -58,30 +58,27 @@ const residentSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(getResidentDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
+     .addCase(getResidentDetails.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
 
-        const { data, pagination } = action.payload;
+  const { data, pagination } = action.payload;
+  const search = action.meta.arg.search || "";
+  const cursor = action.meta.arg.cursor || null;
 
-      const search = action.meta.arg.search || "";
-    
-      if (state.searchText !== search) {
-        state.data = data;
-        state.isFirstLoad = false;
-        state.searchText = search;
-      } else {
-        if (state.isFirstLoad) {
-          state.data = data;
-          state.isFirstLoad = false;
-        } else {
-          state.data = [...state.data, ...data];
-        }
-        }
+  // If search text changed OR fetching first page (cursor is null), replace data
+  if (state.searchText !== search || !cursor) {
+    state.data = data; // replace old data with new search results
+    state.searchText = search; // store current search text
+  } else {
+    // Otherwise append data for "load more"
+    state.data = [...state.data, ...data];
+  }
 
-        state.nextCursor = pagination?.next_cursor || null;
-        state.hasNextPage = pagination?.has_next_page || false;
-      })
+  // Update pagination
+  state.nextCursor = pagination?.next_cursor || null;
+  state.hasNextPage = pagination?.has_next_page || false;
+})
       .addCase(viewResidentDetails.pending, (state) => {
         state.loading = true;
         state.error = null;

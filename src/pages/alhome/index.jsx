@@ -79,6 +79,23 @@ function Home() {
     }
   };
 
+
+  const [searchText, setSearchText] = useState("");
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(clearHomeState());
+      dispatch(
+        getHomeDetails({
+          limit: 10,
+          search: searchText,
+        })
+      );
+    }, 500);
+  
+    return () => clearTimeout(timer);
+  }, [searchText, dispatch]);
+
   const handleBulkView = (ids) => {
     console.log("View Selected Homes:", ids);
     toast.success(`${ids.length} homes selected for viewing`);
@@ -112,6 +129,9 @@ function Home() {
       showBulkActions={true}
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
+        showSearch={true}
+  searchValue={searchText}
+  onSearchChange={setSearchText}
     />
     </>
   );

@@ -77,6 +77,24 @@ function Alerts() {
     toast.success(`${ids.length} alerts selected for delete`);
   };
 
+  const [searchText, setSearchText] = useState("");
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(clearAlertState());
+      dispatch(
+        getAlertDetails({
+          limit: 10,
+          search: searchText,
+        })
+      );
+    }, 500);
+  
+    return () => clearTimeout(timer);
+  }, [searchText, dispatch]);
+
+
+
   return (
     <>
          <Breadcrumb items={[{ label: "Alert" }]} />
@@ -103,6 +121,9 @@ function Alerts() {
       showBulkActions={true}
       onBulkView={handleBulkView}
       onBulkDelete={handleBulkDelete}
+        showSearch={true}
+  searchValue={searchText}
+  onSearchChange={setSearchText}
     />
     </>
 

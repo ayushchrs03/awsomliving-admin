@@ -175,7 +175,7 @@ export const Header = ({ className, collapse, setCollapse }) => {
             {/* <Notification /> */}
             <div className="hidden sm:!flex relative gap-2">
 
-              {activeSearchRoute && (
+              {/* {activeSearchRoute && (
                 <div className="flex justify-end">
                   <div className="relative w-64">
                     <SearchIcon
@@ -191,7 +191,7 @@ export const Header = ({ className, collapse, setCollapse }) => {
                     />
                   </div>
                 </div>
-              )}
+              )} */}
 
               <button
                 onClick={() => setSignedInMenuPopup(!signedInMenuPopup)}

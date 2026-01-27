@@ -112,6 +112,24 @@ const handleCopyToken = async () => {
     console.log("Delete Selected Devices:", ids);
     toast.success(`${ids.length} devices selected for delete`);
   };
+    const [searchText, setSearchText] = useState("");
+  
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(clearDeviceState());
+      dispatch(
+        getDeviceDetails({
+          limit: 10,
+          search: searchText,
+        })
+      );
+    }, 500);
+  
+    return () => clearTimeout(timer);
+  }, [searchText, dispatch]);
+
+
 
   return (
     <>
@@ -140,6 +158,9 @@ const handleCopyToken = async () => {
         showBulkActions={true}
         onBulkView={handleBulkView}
         onBulkDelete={handleBulkDelete}
+        showSearch={true}
+  searchValue={searchText}
+  onSearchChange={setSearchText}
       />
 
       <Dialog
