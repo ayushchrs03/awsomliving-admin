@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "../../components/table/dataTable";
+import { useDispatch, useSelector } from "react-redux";
 import { getAlertDetails, updateAlertStatus } from "../../redux/actions/alert-action";
 import { clearAlertState } from "../../redux/slices/alertSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../components/formField/breadcrumb";
+import {useDebouncedEffect} from "../../components/formField/capitalizer"
 
 export const headers = [
   { fieldName: "name", headerName: "Alert Name" },
@@ -17,28 +18,20 @@ export const headers = [
 
 function Alerts() {
   const dispatch = useDispatch();
-
-  const { data, loading, hasNextPage, nextCursor } = useSelector(
-    (state) => state.alert
-  );
+  const { data = [], loading, hasNextPage, nextCursor } = useSelector((state) => state.alert);
 
   const [selectedIds, setSelectedIds] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
+  useDebouncedEffect(() => {
     dispatch(clearAlertState());
-    dispatch(getAlertDetails({ limit: 10 }));
-  }, [dispatch]);
-
-  const handleLoadMore = () => {
-    if (!loading && hasNextPage) {
-      dispatch(
-        getAlertDetails({
-          limit: 10,
-          cursor: nextCursor,
-        })
-      );
-    }
-  };
+    dispatch(
+      getAlertDetails({
+        limit: 10,
+        search: searchText || undefined,
+      })
+    );
+  }, [searchText, dispatch], 500);
 
   const tableData = data.map((item) => ({
     _id: item._id,
@@ -59,11 +52,15 @@ function Alerts() {
         })
       ).unwrap();
 
-      toast.success(
-        `Alert ${currentStatus ? "deactivated" : "activated"} successfully`
-      );
+      toast.success(`Alert ${currentStatus ? "deactivated" : "activated"} successfully`);
     } catch (error) {
       toast.error(error?.message || "Failed to update alert status");
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (!loading && hasNextPage) {
+      dispatch(getAlertDetails({ limit: 10, cursor: nextCursor }));
     }
   };
 
@@ -77,56 +74,35 @@ function Alerts() {
     toast.success(`${ids.length} alerts selected for delete`);
   };
 
-  const [searchText, setSearchText] = useState("");
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(clearAlertState());
-      dispatch(
-        getAlertDetails({
-          limit: 10,
-          search: searchText,
-        })
-      );
-    }, 500);
-  
-    return () => clearTimeout(timer);
-  }, [searchText, dispatch]);
-
-
-
   return (
     <>
-         <Breadcrumb items={[{ label: "Alert" }]} />
-    
-    <DataTable
-      loading={loading}
-      headers={headers}
-      data={tableData}
-      onStatusToggle={handleStatusToggle}
-      statusToggle={true}
-      title="Alert Listing"
-      addButtonLabel="Add Alert"
-      addLink="/alert/add"
-      editLink="/alert/edit"
-      viewLink="/alert/view"
-      showLoadMore={true}
-      hasNextPage={hasNextPage}
-      onLoadMore={handleLoadMore}
+      <Breadcrumb items={[{ label: "Alert" }]} />
 
-      showCheckboxSelection={true}
-      selectedIds={selectedIds}
-      onSelectionChange={setSelectedIds}
-
-      showBulkActions={true}
-      onBulkView={handleBulkView}
-      onBulkDelete={handleBulkDelete}
-        showSearch={true}
-  searchValue={searchText}
-  onSearchChange={setSearchText}
-    />
+      <DataTable
+        loading={loading}
+        headers={headers}
+        data={tableData}
+        onStatusToggle={handleStatusToggle}
+        statusToggle
+        title="Alert Listing"
+        addButtonLabel="Add Alert"
+        addLink="/alert/add"
+        editLink="/alert/edit"
+        viewLink="/alert/view"
+        showLoadMore
+        hasNextPage={hasNextPage}
+        onLoadMore={handleLoadMore}
+        showCheckboxSelection
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        showBulkActions
+        onBulkView={handleBulkView}
+        onBulkDelete={handleBulkDelete}
+        showSearch
+        searchValue={searchText}
+        onSearchChange={setSearchText}
+      />
     </>
-
   );
 }
 

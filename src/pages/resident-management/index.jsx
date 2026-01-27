@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "../../components/table/dataTable";
-import {
-  getResidentDetails,
-  updateResidentStatus,
-} from "../../redux/actions/resident-action";
-import { resetResidentList } from "../../redux/slices/residentSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { getResidentDetails, updateResidentStatus } from "../../redux/actions/resident-action";
+import { resetResidentList } from "../../redux/slices/residentSlice";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../components/formField/breadcrumb";
+import {useDebouncedEffect} from "../../components/formField/capitalizer"
 
 export const headers = [
   { fieldName: "name", headerName: "Resident Name" },
@@ -20,23 +18,22 @@ export const headers = [
 
 function Resident() {
   const dispatch = useDispatch();
-
-  const { data, loading, hasNextPage, nextCursor } = useSelector(
-    (state) => state.resident
-  );
+  const { data = [], loading, hasNextPage, nextCursor } = useSelector((state) => state.resident);
 
   const [selectedIds, setSelectedIds] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    dispatch(getResidentDetails({ limit: 10 }));
-
-    return () => {
-      dispatch(resetResidentList());
-    };
-  }, [dispatch]);
+  useDebouncedEffect(() => {
+    dispatch(resetResidentList());
+    dispatch(
+      getResidentDetails({
+        limit: 10,
+        search: searchText || undefined,
+      })
+    );
+  }, [searchText, dispatch], 500);
 
   const residents = Array.isArray(data) ? data : [];
-
   const tableData = residents.map((item, index) => ({
     _id: item._id,
     "#": index + 1,
@@ -49,31 +46,23 @@ function Resident() {
     status: item.status === "active",
   }));
 
- const handleStatusToggle = async (id, currentStatus) => {
-  try {
-    await dispatch(
-      updateResidentStatus({
-        id,
-        status: currentStatus ? "inactive" : "active",
-      })
-    ).unwrap();
-
-    toast.success(
-      `Resident ${currentStatus ? "deactivated" : "activated"} successfully`
-    );
-  } catch (error) {
-    toast.error(error?.message || "Failed to update resident status");
+  const handleStatusToggle = async (id, currentStatus) => {
+    try {
+      await dispatch(
+        updateResidentStatus({
+          id,
+          status: currentStatus ? "inactive" : "active",
+        })
+      ).unwrap();
+      toast.success(`Resident ${currentStatus ? "deactivated" : "activated"} successfully`);
+    } catch (error) {
+      toast.error(error?.message || "Failed to update resident status");
     }
   };
 
   const handleLoadMore = () => {
     if (!loading && hasNextPage) {
-      dispatch(
-        getResidentDetails({
-          limit: 10,
-          cursor: nextCursor,
-        })
-      );
+      dispatch(getResidentDetails({ limit: 10, cursor: nextCursor }));
     }
   };
 
@@ -86,56 +75,35 @@ function Resident() {
     console.log("Delete Selected Residents:", ids);
     toast.success(`${ids.length} residents selected for delete`);
   };
-  
-      const [searchText, setSearchText] = useState("");
-    
-    
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        dispatch(resetResidentList());
-        dispatch(
-          getResidentDetails({
-            limit: 10,
-            search: searchText,
-          })
-        );
-      }, 500);
-    
-      return () => clearTimeout(timer);
-    }, [searchText, dispatch]);
-  
-  
 
   return (
-     <>
+    <>
       <Breadcrumb items={[{ label: "Resident" }]} />
 
-    <DataTable
-      loading={loading}
-      headers={headers}
-      data={tableData}
-      onStatusToggle={handleStatusToggle}
-      statusToggle
-      title="Resident Listing"
-      addButtonLabel="Add Resident"
-      addLink="/resident/add"
-      editLink="/resident/edit"
-      viewLink="/resident/view"
-      showLoadMore
-      hasNextPage={hasNextPage}
-      onLoadMore={handleLoadMore}
-
-      showCheckboxSelection={true}
-      selectedIds={selectedIds}
-      onSelectionChange={setSelectedIds}
-
-      showBulkActions={true}
-      onBulkView={handleBulkView}
-      onBulkDelete={handleBulkDelete}
-       showSearch={true}
-  searchValue={searchText}
-  onSearchChange={setSearchText}
-    />
+      <DataTable
+        loading={loading}
+        headers={headers}
+        data={tableData}
+        onStatusToggle={handleStatusToggle}
+        statusToggle
+        title="Resident Listing"
+        addButtonLabel="Add Resident"
+        addLink="/resident/add"
+        editLink="/resident/edit"
+        viewLink="/resident/view"
+        showLoadMore
+        hasNextPage={hasNextPage}
+        onLoadMore={handleLoadMore}
+        showCheckboxSelection
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
+        showBulkActions
+        onBulkView={handleBulkView}
+        onBulkDelete={handleBulkDelete}
+        showSearch
+        searchValue={searchText}
+        onSearchChange={setSearchText}
+      />
     </>
   );
 }

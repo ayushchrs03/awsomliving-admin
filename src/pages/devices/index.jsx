@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "../../components/table/dataTable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,16 +7,11 @@ import {
   createDeviceToken,
 } from "../../redux/actions/device-action";
 import { clearDeviceState } from "../../redux/slices/deviceSlice";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { FiCopy } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../components/formField/breadcrumb";
+import {useDebouncedEffect} from "../../components/formField/capitalizer"
 
 export const headers = [
   { fieldName: "deviceName", headerName: "Device Name" },
@@ -29,78 +24,70 @@ export const headers = [
 
 function Devices() {
   const dispatch = useDispatch();
+  const { data = [], loading, hasNextPage, nextCursor, token } = useSelector((state) => state.device);
 
-  const { data = [], loading, hasNextPage, nextCursor, token } = useSelector(
-    (state) => state.device
-  );
-
+  const [searchText, setSearchText] = useState("");
+  const [selectedIds, setSelectedIds] = useState([]);
   const [tokenModalOpen, setTokenModalOpen] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [selectedIds, setSelectedIds] = useState([]);
 
-  useEffect(() => {
+  useDebouncedEffect(() => {
     dispatch(clearDeviceState());
-    dispatch(getDeviceDetails({ limit: 10 }));
-  }, [dispatch]);
+    dispatch(
+      getDeviceDetails({
+        limit: 10,
+        search: searchText || undefined,
+      })
+    );
+  }, [searchText, dispatch], 500);
 
-  const tableData = data.map((item, index) => ({
+  const tableData = data?.map((item) => ({
     _id: item._id,
     deviceName: item.type || "-",
     deviceNo: item.sr_num || item.camera_id || "-",
     resident: item.resident?.name || "-",
-    user: item?.resident?.user
+    user: item.resident?.user
       ? `${item.resident.user.first_name} ${item.resident.user.last_name || ""}`
       : "-",
     status: item.status === "active",
   }));
 
-const handleStatusToggle = async (id, currentStatus) => {
-  try {
-    await dispatch(
-      updateDeviceStatus({
-        id,
-        status: currentStatus ? "inactive" : "active",
-      })
-    ).unwrap();
-
-    toast.success(
-      `Device ${currentStatus ? "deactivated" : "activated"} successfully`
-    );
-  } catch (error) {
-    toast.error(error?.message || "Failed to update device status");
+  const handleStatusToggle = async (id, currentStatus) => {
+    try {
+      await dispatch(
+        updateDeviceStatus({
+          id,
+          status: currentStatus ? "inactive" : "active",
+        })
+      ).unwrap();
+      toast.success(`Device ${currentStatus ? "deactivated" : "activated"} successfully`);
+    } catch (error) {
+      toast.error(error?.message || "Failed to update device status");
     }
   };
 
   const handleGenerateToken = async (device) => {
-    const deviceId = device._id;
     setSelectedDeviceId(device.deviceNo);
     setTokenModalOpen(true);
-
-    await dispatch(createDeviceToken(deviceId));
+    await dispatch(createDeviceToken(device._id));
   };
 
-  const handleLoadMore = () => {
-    if (!loading && hasNextPage) {
-      dispatch(
-        getDeviceDetails({
-          limit: 10,
-          cursor: nextCursor,
-        })
-      );
-    }
-  };
-
-const handleCopyToken = async () => {
-  if (!token) return;
-
-  await navigator.clipboard.writeText(token);
-  setCopied(true);
+  const handleCopyToken = async () => {
+    if (!token) return;
+    await navigator.clipboard.writeText(token);
+    setCopied(true);
   };
 
   const handleCloseModal = () => {
     setTokenModalOpen(false);
     setCopied(false);
+  };
+
+  const handleLoadMore = () => {
+    if (!loading && hasNextPage) {
+      dispatch(getDeviceDetails({ limit: 10, cursor: nextCursor }));
+    }
   };
 
   const handleBulkView = (ids) => {
@@ -112,24 +99,6 @@ const handleCopyToken = async () => {
     console.log("Delete Selected Devices:", ids);
     toast.success(`${ids.length} devices selected for delete`);
   };
-    const [searchText, setSearchText] = useState("");
-  
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      dispatch(clearDeviceState());
-      dispatch(
-        getDeviceDetails({
-          limit: 10,
-          search: searchText,
-        })
-      );
-    }, 500);
-  
-    return () => clearTimeout(timer);
-  }, [searchText, dispatch]);
-
-
 
   return (
     <>
@@ -150,17 +119,15 @@ const handleCopyToken = async () => {
         showLoadMore
         hasNextPage={hasNextPage}
         onLoadMore={handleLoadMore}
-
-        showCheckboxSelection={true}
+        showCheckboxSelection
         selectedIds={selectedIds}
         onSelectionChange={setSelectedIds}
-
-        showBulkActions={true}
+        showBulkActions
         onBulkView={handleBulkView}
         onBulkDelete={handleBulkDelete}
-        showSearch={true}
-  searchValue={searchText}
-  onSearchChange={setSearchText}
+        showSearch
+        searchValue={searchText}
+        onSearchChange={setSearchText}
       />
 
       <Dialog

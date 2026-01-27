@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "../../components/table/dataTable";
 import { getUserDetails, updateUserStatus } from "../../redux/actions/user-action";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserState } from "../../redux/slices/userSlice";
 import { toast } from "react-hot-toast";
 import Breadcrumb from "../../components/formField/breadcrumb";
-
+import {useDebouncedEffect} from "../../components/formField/capitalizer"
 export const headers = [
   { fieldName: "name", headerName: "Name" },
   { fieldName: "email", headerName: "Email" },
@@ -16,31 +16,19 @@ export const headers = [
 
 function Users() {
   const dispatch = useDispatch();
-const [searchText, setSearchText] = useState("");
+  const { data, loading, hasNextPage, nextCursor } = useSelector((state) => state.user);
+  const [searchText, setSearchText] = useState("");
+  const [selectedIds, setSelectedIds] = useState([]);
 
-useEffect(() => {
-  const timer = setTimeout(() => {
+  useDebouncedEffect(() => {
     dispatch(clearUserState());
     dispatch(
       getUserDetails({
         limit: 10,
-        search: searchText,
+        search: searchText || undefined,
       })
     );
-  }, 500);
-
-  return () => clearTimeout(timer);
-}, [searchText, dispatch]);
-  const { data, loading, hasNextPage, nextCursor } = useSelector(
-    (state) => state.user
-  );
-  const [selectedIds, setSelectedIds] = useState([]);
-
-  useEffect(() => {
-    dispatch(clearUserState());
-    dispatch(getUserDetails({ limit: 10 }));
-  }, [dispatch]);
-
+  }, [searchText, dispatch], 500);
 
   const formatNames = (list = []) => {
   if (!list || list.length === 0) return "-";
@@ -66,7 +54,6 @@ useEffect(() => {
   status: item.status === "active",
 }));
 
-
   const handleStatusToggle = async (id, currentStatus) => {
     try {
       await dispatch(
@@ -76,9 +63,7 @@ useEffect(() => {
         })
       ).unwrap();
 
-      toast.success(
-        `User ${currentStatus ? "deactivated" : "activated"} successfully`
-      );
+      toast.success(`User ${currentStatus ? "deactivated" : "activated"} successfully`);
     } catch (error) {
       toast.error(error?.message || "Failed to update user status");
     }
@@ -86,12 +71,7 @@ useEffect(() => {
 
   const handleLoadMore = () => {
     if (!loading && hasNextPage) {
-      dispatch(
-        getUserDetails({
-          limit: 10,
-          cursor: nextCursor,
-        })
-      );
+      dispatch(getUserDetails({ limit: 10, cursor: nextCursor }));
     }
   };
 
