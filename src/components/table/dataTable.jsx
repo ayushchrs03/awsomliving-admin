@@ -250,9 +250,9 @@ const handleAdd =()=>{
         <TableShimmer />
       ) : (
         <>
-          <div className="overflow-x-auto overflow-y-auto min-h-[500px] mx-auto w-full">
+<div className="overflow-x-auto mx-auto w-full max-h-[70vh] overflow-y-auto">
             <table className="min-w-full bg-white dark:bg-slate-800">
-              <thead>
+<thead className="sticky top-0 z-10 bg-[#F8F8F8] dark:bg-gray-900">
                 <tr className="w-full bg-[#F8F8F8] dark:bg-gray-900">
                   {selectable && (
                     <th className="text-center py-4 px-4 font-normal text-xs">
