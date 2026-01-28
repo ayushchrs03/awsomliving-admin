@@ -184,9 +184,9 @@ const handleAdd =()=>{
 
        
 
-<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+<div className="flex flex-col sm:flex-row md:items-center md:justify-between gap-4 mb-4">
           {selectable && showBulkActions && selectedIds.length > 0 ? (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm sm:text-lg text-gray-600 dark:text-gray-200">
+            <div className="flex  sm:flex-row sm:items-center gap-2 text-sm sm:text-lg text-gray-600 dark:text-gray-200">
               <div className="flex items-center">
                 {/* <Checkbox checked={true} size="small" /> */}
                 <span className="font-medium">
