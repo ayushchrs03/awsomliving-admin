@@ -141,7 +141,7 @@ useEffect(() => {
     <div>
   <Breadcrumb
     items={[
-      { label: "Alert", path: "/alerts" },
+      { label: "Alert", path: "/alert" },
       { label: title },
     ]}
   />
