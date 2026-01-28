@@ -132,16 +132,22 @@ const handleAdd =()=>{
   return (
     <>
       <div className="px-2">
-        <div className="flex items-center justify-between h-[40px] mb-4">
+<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
             {title}
           </h2>
 
           {showAddButton && (
-          <button className="bg-[#EF9421] text-white hover:bg-orange-500 px-4 py-2 rounded text-sm flex items-center gap-2 whitespace-nowrap" onClick={handleAdd}>
-    <MdOutlineAddBox size={18} />
-    {addButtonLabel}
-  </button>
+         <button
+  className="bg-[#EF9421] text-white hover:bg-orange-500 
+             px-4 py-2 rounded text-sm 
+             flex items-center justify-center gap-2 
+             w-full sm:w-auto"
+  onClick={handleAdd}
+>
+  <MdOutlineAddBox size={18} />
+  {addButtonLabel}
+</button>
           )}
         </div>
         
@@ -178,9 +184,9 @@ const handleAdd =()=>{
 
        
 
-        <div className="flex md:flex-row md:items-center md:justify-between gap-3 mb-4">
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           {selectable && showBulkActions && selectedIds.length > 0 ? (
-            <div className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm sm:text-lg text-gray-600 dark:text-gray-200">
               <div className="flex items-center">
                 {/* <Checkbox checked={true} size="small" /> */}
                 <span className="font-medium">
@@ -208,9 +214,9 @@ const handleAdd =()=>{
             <div />
           )}
 
-          <div className="flex items-center gap-3 justify-end">
+<div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             {showSearch && (
-              <div className="relative w-[260px]">
+              <div className="relative w-full sm:w-[260px]">
                 <SearchIcon
                   fontSize="small"
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -228,8 +234,10 @@ const handleAdd =()=>{
             {showFilter && (
               <button
                 onClick={onFilterClick}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm text-[#EF9421] hover:bg-orange-50"
-              >
+  className="flex items-center justify-center gap-2 
+             px-4 py-2 rounded-lg border border-gray-200 
+             text-sm text-[#EF9421] hover:bg-orange-50
+             w-full sm:w-auto"              >
                 <FilterAltOutlinedIcon fontSize="small" />
                 Filter
               </button>
