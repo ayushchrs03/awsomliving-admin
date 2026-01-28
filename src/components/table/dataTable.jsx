@@ -144,6 +144,7 @@ const handleAdd =()=>{
   </button>
           )}
         </div>
+        
         {showStats && (
 
 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -174,6 +175,8 @@ const handleAdd =()=>{
 </div>
 
        )} 
+
+       
 
         <div className="flex md:flex-row md:items-center md:justify-between gap-3 mb-4">
           {selectable && showBulkActions && selectedIds.length > 0 ? (
@@ -293,6 +296,30 @@ const handleAdd =()=>{
                       )}
 
                       {headers.map((header, colIndex) => {
+
+                        if (header.fieldName === "generateToken") {
+  const isEmfit =
+    item.deviceName?.toLowerCase() === "emfit" ||
+    item.type?.toLowerCase() === "emfit";
+
+  return (
+    <td
+      key={colIndex}
+      className="text-center py-4 px-4 whitespace-nowrap text-xs"
+    >
+      {isEmfit ? (
+        <button
+          onClick={() => onGenerateToken?.(item)}
+          className="bg-[#EF9421] text-white px-3 py-1 rounded text-xs hover:bg-orange-400"
+        >
+          Generate
+        </button>
+      ) : (
+        "-"
+      )}
+    </td>
+  );
+}
 
                         if (header.fieldName?.toLowerCase() === "status") {
                           return (

@@ -16,6 +16,7 @@ import AlertForm from "../pages/alerts/AlertForm";
 import UserForm from "../pages/users/userForm";
 import ResidentForm from "../pages/resident-management/residentForm";
 import HomeForm from "../pages/alhome/HomeForm";
+import EarlyAccess from "../pages/early-access";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <Dashboard /> },
               { path: "dashboard", element: <Dashboard /> },
+              { path: "early-access", element: <EarlyAccess /> },
         
               { path: "home", element: <Alhome /> },
               { path: "home/add", element: <HomeForm mode="add" /> },
@@ -51,12 +53,12 @@ const router = createBrowserRouter([
               { path: "user/edit", element: <UserForm mode="edit" /> },
               { path: "user/view", element: <UserForm mode="view" /> },
 
-              { path: "devices", element: <Device /> },
+              { path: "device", element: <Device /> },
               { path: "device/add", element: <DeviceForm mode="add" /> },
               { path: "device/edit", element: <DeviceForm mode="edit" /> },
               { path: "device/view", element: <DeviceForm mode="view" /> },
 
-              { path: "alerts", element: <Alerts /> },
+              { path: "alert", element: <Alerts /> },
               { path: "alert/add", element: <AlertForm mode="add" /> },
               { path: "alert/edit", element: <AlertForm mode="edit" /> },
               { path: "alert/view", element: <AlertForm mode="view" /> },

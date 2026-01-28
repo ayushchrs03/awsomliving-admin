@@ -9,14 +9,16 @@ import {
   LuLayoutDashboard,
   LuLogOut
 } from "react-icons/lu";
+import { FaRegUserCircle } from "react-icons/fa";
 import { MdOutlineDevices } from "react-icons/md";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { iconSize } from "../../utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../buttons";
 
 export const Sidebar = ({ className, collapse }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const initialSidebarItems = [
     {
@@ -44,14 +46,14 @@ export const Sidebar = ({ className, collapse }) => {
       id: 3,
       title: "Devices",
       icon: <MdOutlineDevices size={iconSize} />,
-      to: "/devices",
+      to: "/device",
       isPinned: false,
     },
     {
       id: 4,
       title: "Alerts",
       icon: <LuCircleAlert size={iconSize} />,
-      to: "/alerts",
+      to: "/alert",
       isPinned: false,
     },
     {
@@ -68,10 +70,22 @@ export const Sidebar = ({ className, collapse }) => {
       to: "/resident",
       isPinned: false,
     },
+    {
+      id: 7,
+      title: "Early Access Users",
+      icon: <FaRegUserCircle  size={iconSize} />,
+      to: "/early-access",
+      isPinned: false,
+    },
   ];
 
   const [items, setItems] = useState(initialSidebarItems);
   const [signOutModalOpen, setSignOutModalOpen] = useState(false);
+
+ const isRouteActive = (itemPath) => {
+    const currentPath = location.pathname;
+    return currentPath === itemPath || currentPath.startsWith(itemPath + "/");
+  };
 
   const handlePinToggle = (title) => {
     setItems((prevItems) => {
@@ -121,6 +135,7 @@ export const Sidebar = ({ className, collapse }) => {
                 child={item.child}
                 setPin={() => handlePinToggle(item.title)}
                 collapse={collapse}
+                isActive={isRouteActive(item.to)}
               />
             ))}
           </div>

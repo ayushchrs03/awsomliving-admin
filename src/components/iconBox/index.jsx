@@ -14,13 +14,25 @@ export const IconBox = ({
   onClick,
   collapse,
   className,
+  isActive,
 }) => {
   const [dropdown, setDropdown] = useState(false);
   const { pathname } = useLocation();
 
-  // Handle toggle of  dropdown
   const handleDropdown = () => {
     setDropdown(!dropdown);
+  };
+
+  // Check if item is active (handles query parameters)
+  const isItemActive = () => {
+    if (isActive !== undefined) {
+      return isActive;
+    }
+    // Fallback to pathname comparison
+    return (
+      pathname === to ||
+      item?.matches?.some((match) => pathname.includes(match))
+    );
   };
 
   useEffect(() => {
@@ -36,37 +48,13 @@ export const IconBox = ({
     }
   }, [pathname, child]);
 
-  // Function to check if pathname is inside array
-
-  // const isPathnameInArray = (pathname, array) => {
-  //   return array?.some(
-  //     (item) =>
-  //       item.to === pathname ||
-  //       item.child?.some(
-  //         (childItem) =>
-  //           childItem.to === pathname ||
-  //           childItem.matches?.some((match) => match === pathname) ||
-  //           pathname.startsWith(childItem.to)
-  //       )
-  //   );
-  // };
-
-  // const isPathnameInArrayResult = isPathnameInArray(pathname, child);
-
-  // child
-  //   ?.filter((item) => item?.matches)
-  //   ?.forEach((item) => {
-  //     const isMatch = item.matches.some((match) => pathname === match);
-
-  //     if (isMatch) {
-  //     }
-  //   });
-
   const isMatching = child?.some((item) => {
-    item?.matches?.some((match) => {
-      pathname === match;
+    return item?.matches?.some((match) => {
+      return pathname === match || pathname.startsWith(match);
     });
   });
+
+  const currentItemActive = isItemActive();
 
   return (
     <>
@@ -74,19 +62,17 @@ export const IconBox = ({
         <Link
           to={to}
           className={`${className} px-2 py-2.5 ${
-            pathname === to ||
-            item?.matches?.some((match) => pathname.includes(match))
-              ? "!bg-orange-50 dark:bg-bg-orange-50"
+            currentItemActive
+              ? "!bg-orange-50 dark:bg-orange-50 border-r-4 border-[#EF9E33]"
               : ""
-          } relative flex items-center gap-4 text-black dark:text-white hover:!bg-orange-50 dark:hover:bg-orange-50  rounded`}
+          } relative flex items-center gap-4 text-black dark:text-white hover:!bg-orange-50 dark:hover:bg-orange-50 rounded`}
           onClick={onClick}
           data-tooltip-id={collapse ? "my-tooltip" : ""}
           data-tooltip-content={item.title}
         >
           <span
             className={`${
-              pathname == to ||
-              item?.matches?.some((match) => pathname.includes(match))
+              currentItemActive
                 ? "!text-[#EF9E33] dark:text-[#EF9E33]"
                 : "text-black dark:text-white"
             } `}
@@ -96,8 +82,7 @@ export const IconBox = ({
           {title && (
             <span
               className={`${
-                pathname == to ||
-                item?.matches?.some((match) => pathname.includes(match))
+                currentItemActive
                   ? "!text-[#EF9E33] dark:text-[#EF9E33]"
                   : "text-black dark:text-white"
               } text-base flex items-center`}
@@ -108,7 +93,7 @@ export const IconBox = ({
           {child && (
             <FaAngleRight
               className={`absolute right-2 ml-2 transform transition-transform ${
-                pathname == to ? "rotate-90" : "rotate-0"
+                currentItemActive ? "rotate-90" : "rotate-0"
               }`}
             />
           )}
@@ -161,6 +146,10 @@ export const IconBox = ({
             <>
               <ul className={`mt-2.5 space-y-0.5 ${!collapse && "mb-3"}`}>
                 {child.map((data, index) => {
+                  const isChildActive =
+                    pathname.includes(data.to) ||
+                    data?.matches?.some((match) => pathname.includes(match));
+
                   return (
                     <li
                       data-tooltip-id={collapse ? "my-tooltip" : ""}
@@ -173,17 +162,16 @@ export const IconBox = ({
                       <Link
                         to={data.to}
                         className={`${
+                          isChildActive ? "bg-orange-100 dark:bg-orange-900/30" : ""
+                        } ${
                           collapse ? "px-2 py-2.5" : "py-1 pl-2 pr-1"
-                        }  rounded-xl flex items-center gap-2`}
+                        } rounded-xl flex items-center gap-2`}
                       >
                         <span className="flex items-center gap-2">
                           {data.icon ? (
                             <span
                               className={`${
-                                pathname.includes(data.to) ||
-                                data?.matches?.some((match) =>
-                                  pathname.includes(match)
-                                )
+                                isChildActive
                                   ? "fill-primaryText !text-[#884EA7]"
                                   : "text-black dark:text-white group-hover:!text-[#884EA7]"
                               } `}
@@ -193,12 +181,9 @@ export const IconBox = ({
                           ) : (
                             <IoIosArrowRoundForward
                               className={`${
-                                pathname.includes(data.to) ||
-                                data?.matches?.some((match) =>
-                                  pathname.includes(match)
-                                )
-                                  ? "fill-primaryText"
-                                  : "fill-black dark:fill-white group-hover:fill-primaryText"
+                                isChildActive
+                                  ? "fill-primaryText !fill-[#884EA7]"
+                                  : "fill-black dark:fill-white group-hover:fill-[#884EA7]"
                               }`}
                               size={iconSize}
                             />
@@ -206,10 +191,7 @@ export const IconBox = ({
                           {!collapse && data.title && (
                             <span
                               className={`${
-                                pathname.includes(data.to) ||
-                                data?.matches?.some((match) =>
-                                  pathname.includes(match)
-                                )
+                                isChildActive
                                   ? "!text-[#884EA7]"
                                   : "text-black dark:text-white group-hover:!text-[#884EA7]"
                               } text-sm`}
