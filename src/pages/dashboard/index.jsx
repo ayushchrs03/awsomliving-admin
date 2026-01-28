@@ -11,6 +11,7 @@ import { AlertModule } from "./charts/alertAnalytics";
 import { AlertLogModule } from "./charts/alertLogAnalytics";
 import client from "../../redux/axios-baseurl";
 import { useCallback } from "react";
+import DashboardSkeleton from "./dashboardSkeleton";
 
 function useInViewLogger(componentName, apiFunction) {
   const ref = useRef(null);
@@ -123,9 +124,11 @@ function Dashboard() {
     const [rulesByStatus, setRulesByStatus] = useState([]);
     const [homeGrowthData, setHomeGrowthData] = useState([]);
     const [activeInactiveHomes, setActiveInactiveHomes] = useState([]);
-
+const [statsLoading, setStatsLoading] = useState(true);
 const runDashboardStatsApi = async () => {
   try {
+    setStatsLoading(true);
+
     const { data } = await client.get("dashboard/get-count");
 
     const formatted = data.data.map(item => ({
@@ -138,8 +141,11 @@ const runDashboardStatsApi = async () => {
     setStats(formatted);
   } catch (error) {
     console.error("Dashboard stats API error:", error);
+  } finally {
+    setStatsLoading(false);
   }
 };
+
 
 
 const runUserFunnelPageApi = async () => {
@@ -148,6 +154,7 @@ const runUserFunnelPageApi = async () => {
     const { data } = await client.get("user/funnel-dropoff");
     console.log("UserFunnelPage API Response:", data);
     setFunnelData(data.data);
+    runUserModuleApi()
     return data;
   } catch (error) {
     console.error("UserFunnelPage API Error:", error);
@@ -189,7 +196,7 @@ const runHomeModuleApi = async () => {
     setHomeGrowthData(
       growthRes.data.data.map(item => ({
         date: `${item.month} ${item.year}`,
-        users: item.homes,   // keep key as `users` (chart already expects it)
+        users: item.homes,  
       }))
     );
 
@@ -363,7 +370,12 @@ useEffect(() => {
   const alertModuleRef = useInViewLogger("AlertModule", runAlertModuleApi);
   const alertLogModuleRef = useInViewLogger("AlertLogModule", runAlertLogModuleApi);
 
-  return (
+
+    return (
+  <>
+    {statsLoading ? (
+      <DashboardSkeleton />
+    ) : (
     <div className="min-h-screen bg-gray-50">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
         <h1 className="text-xl sm:text-2xl font-semibold">Dashboard</h1>
@@ -422,7 +434,10 @@ useEffect(() => {
       </div>
        {open && <SetupWizardModal onClose={() => setOpen(false)} />}
     </div>
-  );
+    )}
+  </>
+);
+
 }
 
 export default Dashboard;
