@@ -231,7 +231,7 @@ onGenerateToken,
               </div>
             )}
 
-            {showFilter && (
+            {/* {showFilter && (
               <button
                 onClick={onFilterClick}
                 className="flex items-center justify-center gap-2 
@@ -241,7 +241,7 @@ onGenerateToken,
                 <FilterAltOutlinedIcon fontSize="small" />
                 Filter
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>

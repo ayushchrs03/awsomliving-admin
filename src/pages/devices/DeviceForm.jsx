@@ -35,12 +35,14 @@ const DeviceForm = ({ mode }) => {
     (state) => state.device
   );
 
-  const [formData, setFormData] = useState({
-    type: "",
-    camera_id: "",
-    sr_num: "",
-    resident: "",
-  });
+const [formData, setFormData] = useState({
+  type: "",
+  camera_id: "",
+  client_id: "",
+  client_secret: "",
+  sr_num: "",
+  resident: "",
+});
 
   const [residentOptions, setResidentOptions] = useState([]);
   const [errors, setErrors] = useState({});
@@ -70,6 +72,8 @@ const DeviceForm = ({ mode }) => {
         ...prev,
         type: details.type || "",
         camera_id: details.camera_id || "",
+          client_id: details.client_id || "",
+      client_secret: details.client_secret || "",
         sr_num: details.sr_num || "",
         resident:
           typeof details.resident === "object"
@@ -124,33 +128,31 @@ const DeviceForm = ({ mode }) => {
     <div className="space-y-4">
   <Breadcrumb
     items={[
-      { label: "Device ", path: "/devices" },
+      { label: "Device ", path: "/device" },
       { label: title },
     ]}
   />
 
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-    
-
-      <div className="p-8 space-y-10 w-full">
+  
+  
+      <div>
         {isView ? (
          <div>
-    <p className="text-[28px] leading-[32px] text-[#121212] font-medium px-2 mb-6">
+<p className="text-[20px] leading-[24px] sm:text-[28px] sm:leading-[32px] text-[#121212] font-medium px-2 mb-6">
       Device Details
     </p>
 
-    {/* Device Main Card */}
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-      <div className="flex items-start justify-between">
+<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           {/* Device Avatar */}
-          <div className="w-12 h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-lg">
+<div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#EF9421] flex items-center justify-center text-white uppercase font-bold text-base sm:text-lg">
             {formData.type?.charAt(0) || "D"}
           </div>
 
           {/* Device Type + Resident */}
           <div>
-            <h2 className="text-[28px] leading-[32px] mb-2 font-semibold text-gray-900">
+<h2 className="text-[20px] leading-[24px] sm:text-[28px] sm:leading-[32px] mb-2 font-semibold text-gray-900">
               {formData.type || "—"}
             </h2>
             <p className="text-[14px] leading-[14px] text-gray-500">
@@ -160,7 +162,7 @@ const DeviceForm = ({ mode }) => {
         </div>
 
         {/* Status */}
-        <span className="text-sm text-green-600 flex items-center gap-2">
+<span className="text-xs sm:text-sm text-green-600 flex items-center gap-2 self-start sm:self-auto">
           <span className="w-2 h-2 rounded-full bg-green-500" />
           Active
         </span>
@@ -252,15 +254,36 @@ const DeviceForm = ({ mode }) => {
             />
 
             {formData.type === "Eltum" && (
-              <FormField
-                label="Camera ID"
-                name="camera_id"
-                value={formData.camera_id}
-                onChange={(e) => onChangeField("camera_id", e.target.value)}
-                rules={[{ type: "required" }]}
-                error={errors.camera_id}
-              />
-            )}
+  <>
+    <FormField
+      label="Camera ID"
+      name="camera_id"
+      value={formData.camera_id}
+      onChange={(e) => onChangeField("camera_id", e.target.value)}
+      rules={[{ type: "required" }]}
+      error={errors.camera_id}
+    />
+
+    <FormField
+      label="Client ID"
+      name="client_id"
+      value={formData.client_id}
+      onChange={(e) => onChangeField("client_id", e.target.value)}
+      rules={[{ type: "required" }]}
+      error={errors.client_id}
+    />
+
+    <FormField
+      label="Client Secret"
+      name="client_secret"
+      type="password"
+      value={formData.client_secret}
+      onChange={(e) => onChangeField("client_secret", e.target.value)}
+      rules={[{ type: "required" }]}
+      error={errors.client_secret}
+    />
+  </>
+)}
 
             {formData.type === "Emfit" && (
               <FormField
@@ -294,7 +317,7 @@ const DeviceForm = ({ mode }) => {
           )}
         </div>
       </div>
-    </div>
+  
     </div>
   );
 };
