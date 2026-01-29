@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import FormField from "../formField";
 import client from "../../redux/axios-baseurl";
-import { RxCross2 } from "react-icons/rx";
 import Loading from "../../components/loader";
 import { validateForm, allowOnlyTenDigits } from "../../utils/formUtils";
+import Breadcrumb from "../../components/formField/breadcrumb";
+import { SiStackblitz } from "react-icons/si";
+import { IoAnalyticsOutline } from "react-icons/io5";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 
 function SetupWizardModal({ onClose }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const steps = ["User Details", "Home", "Resident Details", "Devices"];
-
   const [errors, setErrors] = useState({});
+
+  const steps = ["User Details", "Home & Devices", "Resident Details"];
 
   const [user, setUser] = useState({
     first_name: "",
@@ -50,179 +55,167 @@ function SetupWizardModal({ onClose }) {
   const buildPayload = () => ({
     user: { ...user },
     home: { ...home },
-    resident: {
-      ...resident,
-      age: Number(resident.age),
-    },
+    resident: { ...resident, age: Number(resident.age) },
     device: {
-       type:
-      device.type === "altum"
-        ? "Eltum"
-        : device.type === "emfit"
-        ? "Emfit"
-        : "",
+      type:
+        device.type === "altum"
+          ? "Eltum"
+          : device.type === "emfit"
+            ? "Emfit"
+            : "",
       camera_id: device.camera_id || "",
       sr_num: device.sr_num || "",
     },
   });
 
-  const submitQuickSetup = async () => {
-    try {
-      setLoading(true);
-      const payload = buildPayload();
-      const res = await client.post("/quick-setup", payload);
-      console.log("Quick setup success", res.data);
-      onClose();
-    } catch (error) {
-      console.error("Quick setup failed", error?.response?.data || error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate()
+ const submitQuickSetup = async () => {
+  try {
+    setLoading(true);
+    const payload = buildPayload();
+    const res = await client.post("/quick-setup", payload);
 
-  // ✅ Step Validations
+    toast.success("User setup completed successfully");
+    navigate("/user")
+  } catch (error) {
+    toast.error(error?.response?.data?.error_message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   const validateStep = () => {
-    // Step 1
-    if (step === 1) {
-      const isValid = validateForm(
-        user,
-        setErrors
-      );
-      return isValid;
-    }
-
-    // Step 2
+    if (step === 1) return validateForm(user, setErrors);
     if (step === 2) {
-      const isValid = validateForm(
-        home,
-        setErrors
-      );
-      return isValid;
-    }
+      const isHomeValid = validateForm(home, setErrors);
+      if (!isHomeValid) return false;
 
-    // Step 3
-    if (step === 3) {
-      const isValid = validateForm(
-        resident,
-        setErrors
-      );
-      return isValid;
-    }
-
-    // Step 4
-    if (step === 4) {
-      // ✅ Device type required
       if (!device.type) {
         setErrors({ type: "Please select device type" });
         return false;
       }
 
-      // ✅ validate SR / Camera based on type
-      if (device.type === "emfit") {
-        const isValid = validateForm(
-          { sr_num: device.sr_num },
-          setErrors
-        );
-        return isValid;
-      }
+      if (device.type === "emfit")
+        return validateForm({ sr_num: device.sr_num }, setErrors);
 
-      if (device.type === "altum") {
-        const isValid = validateForm(
-          { camera_id: device.camera_id },
-          setErrors
-        );
-        return isValid;
-      }
+      if (device.type === "altum")
+        return validateForm({ camera_id: device.camera_id }, setErrors);
 
       return true;
     }
 
+    if (step === 3) return validateForm(resident, setErrors);
     return true;
   };
 
   const handleNext = () => {
-    const isValid = validateStep();
-    if (!isValid) return;
+    if (!validateStep()) return;
 
-    if (step < 4) {
-      setStep(step + 1);
-    } else {
-      submitQuickSetup();
-    }
+    if (step < 3) setStep(step + 1);
+    else submitQuickSetup();
   };
 
+  const renderStepper = () => (
+    <div className="flex items-center gap-6">
+      {steps.map((label, index) => {
+        const active = step === index + 1;
+        const completed = step > index + 1;
+
+        return (
+          <div key={label} className="flex items-center gap-2">
+            <div
+              className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium
+    ${completed
+                  ? "bg-green-600 text-white"
+                  : active
+                    ? "bg-[#FDF4E9] border-2 border-[#EF9421] text-[#EF9421]"
+                    : "bg-white border border-gray-300 text-gray-400"
+                }`}
+            >
+              {completed ? "✓" : index + 1}
+            </div>
+
+            <span
+              className={`text-sm ${active ? "text-[#EF9421] font-medium" : "text-gray-500"
+                }`}
+            >
+              {label}
+            </span>
+
+            {index < steps.length - 1 && (
+              <div className="w-10 h-px bg-gray-300 mx-2" />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+  const isStepComplete = () => {
+  // STEP 1
+  if (step === 1) {
+    return (
+      user.first_name &&
+      user.last_name &&
+      user.email &&
+      user.phone.length === 10
+    );
+  }
+
+  // STEP 2
+  if (step === 2) {
+    if (!home.name || !device.type) return false;
+
+    if (device.type === "emfit") {
+      return (
+        device.sr_num 
+      );
+    }
+
+    if (device.type === "altum") {
+      return (
+        device.camera_id 
+      );
+    }
+
+    return false;
+  }
+
+  // STEP 3
+  if (step === 3) {
+    return (
+      resident.name &&
+      resident.phone.length === 10 &&
+      resident.age &&
+      resident.gender
+    );
+  }
+
+  return false;
+};
+
+
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40">
+    <div className="p-6 bg-[#F9FAFB] min-h-screen relative">
       {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70">
           <Loading />
         </div>
       )}
 
-      <div className="relative w-full max-w-5xl h-[85vh] rounded-md bg-white shadow-lg flex flex-col">
-        <div className="flex items-center justify-between border-b border-[#EF9421] px-6 py-4">
-          <h2 className="text-lg font-semibold">Setup Wizard</h2>
-          <button
-            onClick={onClose}
-            className="text-xl hover:text-[#EF9421] transition"
-          >
-            <RxCross2 size={22} />
-          </button>
-        </div>
+      <Breadcrumb items={[{ label: "Home" }, { label: "User Quick Setup" }]} />
 
-        {/* Stepper */}
-        <div className="w-full flex justify-center pt-6">
-          <div className="w-full max-w-4xl px-10">
-            <div className="relative flex items-center justify-between">
-              <div className="absolute left-[6%] right-[6%] top-1/2 h-[2px] bg-gray-300"></div>
+      <h1 className="mt-4 text-[28px] leading-[32px] font-semibold text-gray-800">
+        Add New User
+      </h1>
+      <div className="mt-4 bg-white rounded-md  shadow-sm">
 
-              <div
-                className="absolute left-[6%] top-1/2 h-[2px] bg-[#EF9421] transition-all duration-300"
-                style={{
-                  width: `${((step - 1) / (steps.length - 1)) * 88}%`,
-                }}
-              ></div>
+        <div className="px-6 py-6 ">{renderStepper()}</div>
 
-              {steps.map((label, index) => {
-                const currentStep = index + 1;
-                const isActive = step >= currentStep;
-
-                return (
-                  <div
-                    key={label}
-                    onClick={() => setStep(currentStep)}
-                    className="flex flex-col items-center cursor-pointer w-full relative z-10"
-                  >
-                    <div
-                      className={`h-12 w-12 flex items-center justify-center rounded-full border transition
-                      ${
-                        isActive
-                          ? "bg-[#EF9421] text-white border-[#EF9421]"
-                          : "bg-white text-gray-400 border-gray-300"
-                      }`}
-                    >
-                      {currentStep}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-between mt-3">
-              {steps.map((label) => (
-                <div key={label} className="w-full text-center text-sm">
-                  {label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="px-10 py-6 flex-1 overflow-y-auto">
+        <div className="px-6 py-6">
           {/* STEP 1 */}
           {step === 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <FormField
                 label="First Name"
                 name="first_name"
@@ -245,46 +238,157 @@ function SetupWizardModal({ onClose }) {
                 error={errors.last_name}
               />
 
-              <FormField
-                label="Email"
-                name="email"
-                value={user.email}
-                onChange={(e) => setUser({ ...user, email: e.target.value })}
-                rules={[{ type: "required" }, { type: "email" }]}
-                error={errors.email}
-              />
-
-              <FormField
-                label="Phone"
-                name="phone"
-                value={user.phone}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (allowOnlyTenDigits(value)) {
-                    setUser({ ...user, phone: value });
+              <div className="col-span-2">
+                <FormField
+                  label="User Email"
+                  name="email"
+                  value={user.email}
+                  onChange={(e) =>
+                    setUser({ ...user, email: e.target.value })
                   }
-                }}
-                rules={[{ type: "required" }, { type: "length", value: 10 }]}
-                error={errors.phone}
-              />
+                  rules={[{ type: "required" }, { type: "email" }]}
+                  error={errors.email}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <FormField
+                  label="Contact Number"
+                  name="phone"
+                  prefix="+91"
+                  value={user.phone}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (allowOnlyTenDigits(value)) {
+                      setUser({ ...user, phone: value });
+                    }
+                  }}
+                  rules={[{ type: "required" }, { type: "length", value: 10 }]}
+                  error={errors.phone}
+                />
+              </div>
             </div>
           )}
 
           {/* STEP 2 */}
-          {step === 2 && (
-            <FormField
-              label="Home Name"
-              name="name"
-              value={home.name}
-              onChange={(e) => setHome({ name: e.target.value })}
-              rules={[{ type: "required" }]}
-              error={errors.name}
-            />
-          )}
+        {step === 2 && (
+  <div className="space-y-6">
+    <FormField
+      label="Home Name"
+      name="name"
+      value={home.name}
+      onChange={(e) => setHome({ name: e.target.value })}
+      rules={[{ type: "required" }]}
+      error={errors.name}
+    />
+
+    <div className="space-y-4">
+      <h3 className="text-sm font-medium text-gray-700">
+        Select Devices
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* EmFit */}
+        <div
+          onClick={() => handleDeviceSelect("emfit")}
+          className={`cursor-pointer rounded-lg border p-4 transition
+            ${
+              device.type === "emfit"
+                ? "border-[#EF9421] bg-gradient-to-b from-[#FDF4E9] to-[#ffffff]"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+        >
+          <div className="flex items-start gap-3">
+            <div
+              className={`h-10 w-10 rounded-md flex items-center justify-center border
+                ${
+                  device.type === "emfit"
+                    ? "border-[#EF9421] bg-[#FFF7ED] text-[#EF9421]"
+                    : "border-gray-200 bg-white text-gray-400"
+                }`}
+            >
+              <IoAnalyticsOutline className="text-xl" />
+            </div>
+
+            <div>
+              <p className="font-medium">EmFit</p>
+              <p className="text-sm text-gray-500">
+                Contact-free sleep monitoring technology
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Altum */}
+        <div
+          onClick={() => handleDeviceSelect("altum")}
+          className={`cursor-pointer rounded-lg border p-4 transition
+            ${
+              device.type === "altum"
+                ? "border-[#EF9421] bg-gradient-to-b from-[#FDF4E9] to-[#ffffff]"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+        >
+          <div className="flex items-start gap-3">
+            <div
+              className={`h-10 w-10 rounded-md flex items-center justify-center border
+                ${
+                  device.type === "altum"
+                    ? "border-[#EF9421] bg-[#FFF7ED] text-[#EF9421]"
+                    : "border-gray-200 bg-white text-gray-400"
+                }`}
+            >
+              <SiStackblitz className="text-xl" />
+            </div>
+
+            <div>
+              <p className="font-medium">Altum</p>
+              <p className="text-sm text-gray-500">
+                AI Activity Sensor for Senior Care & Patient Monitoring
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {errors.type && (
+        <p className="text-sm text-red-600">{errors.type}</p>
+      )}
+    </div>
+
+    {/* ✅ Device-specific input */}
+    {device.type === "emfit" && (
+      <FormField
+        label="SR Number"
+        name="sr_num"
+        value={device.sr_num}
+        onChange={(e) =>
+          setDevice({ ...device, sr_num: e.target.value })
+        }
+        rules={[{ type: "required" }]}
+        error={errors.sr_num}
+      />
+    )}
+
+    {device.type === "altum" && (
+      <FormField
+        label="Camera ID"
+        name="camera_id"
+        value={device.camera_id}
+        onChange={(e) =>
+          setDevice({ ...device, camera_id: e.target.value })
+        }
+        rules={[{ type: "required" }]}
+        error={errors.camera_id}
+      />
+    )}
+  </div>
+)}
+
 
           {/* STEP 3 */}
           {step === 3 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <FormField
                 label="Resident Name"
                 name="name"
@@ -295,9 +399,19 @@ function SetupWizardModal({ onClose }) {
                 rules={[{ type: "required" }]}
                 error={errors.name}
               />
+              <FormField
+                label="Resident Email"
+                name="email"
+                value={resident.email}
+                onChange={(e) =>
+                  setResident({ ...resident, email: e.target.value })
+                }
+                rules={[{ type: "required" }, { type: "email" }]}
+                error={errors.email}
+              />
 
               <FormField
-                label="Resident Phone"
+                label="Contact Number*"
                 name="phone"
                 value={resident.phone}
                 onChange={(e) => {
@@ -337,37 +451,21 @@ function SetupWizardModal({ onClose }) {
                 rules={[{ type: "required" }]}
                 error={errors.gender}
               />
-
-              <FormField
-                label="Email"
-                name="email"
-                value={resident.email}
-                onChange={(e) =>
-                  setResident({ ...resident, email: e.target.value })
-                }
-                rules={[{ type: "required" }, { type: "email" }]}
-                error={errors.email}
-              />
-
-              <FormField
+                <FormField
                 label="Emergency Contact Name"
                 name="emergency_con_name"
                 value={resident.emergency_con_name}
                 onChange={(e) =>
-                  setResident({
-                    ...resident,
-                    emergency_con_name: e.target.value,
-                  })
+                  setResident({ ...resident, emergency_con_name: e.target.value })
                 }
                 rules={[{ type: "required" }]}
-                error={errors.emergency_con_name}
+                error={errors.name}
               />
-
-              <FormField
-                label="Emergency Contact Number"
+                <FormField
+                label="Emergency Contact Number*"
                 name="emergency_con_num"
                 value={resident.emergency_con_num}
-                onChange={(e) => {
+               onChange={(e) => {
                   const value = e.target.value;
                   if (allowOnlyTenDigits(value)) {
                     setResident({
@@ -381,94 +479,43 @@ function SetupWizardModal({ onClose }) {
               />
             </div>
           )}
-
-          {/* STEP 4 */}
-          {step === 4 && (
-            <div>
-              <div className="flex gap-6 mb-4">
-                <label className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    checked={device.type === "emfit"}
-                    onChange={() => handleDeviceSelect("emfit")}
-                    className="accent-orange-500 scale-150"
-                  />
-                  Emfit
-                </label>
-
-                <label className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    checked={device.type === "altum"}
-                    onChange={() => handleDeviceSelect("altum")}
-                    className="accent-orange-500 scale-150"
-                  />
-                  Altum
-                </label>
-              </div>
-
-              {errors.type && (
-                <p className="text-sm text-red-600 mb-4">{errors.type}</p>
-              )}
-
-              {device.type === "emfit" && (
-                <FormField
-                  label="SR Number"
-                  name="sr_num"
-                  value={device.sr_num}
-                  onChange={(e) =>
-                    setDevice({ ...device, sr_num: e.target.value })
-                  }
-                  rules={[{ type: "required" }]}
-                  error={errors.sr_num}
-                />
-              )}
-
-              {device.type === "altum" && (
-                <FormField
-                  label="Camera ID"
-                  name="camera_id"
-                  value={device.camera_id}
-                  onChange={(e) =>
-                    setDevice({ ...device, camera_id: e.target.value })
-                  }
-                  rules={[{ type: "required" }]}
-                  error={errors.camera_id}
-                />
-              )}
-            </div>
-          )}
         </div>
 
-        {/* Footer */}
-        <div className="flex justify-between px-6 py-4 bg-white sticky bottom-0">
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded border border-gray-300"
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="px-6 py-4 flex justify-between items-center">
+  {/* Left side: Cancel */}
+  <button
+    onClick={()=>navigate("/")}
+    className="px-4 py-2 border border-[#4D4D4F] text-[#4D4D4F] rounded"
+  >
+    Cancel
+  </button>
 
-          <div className="flex gap-3">
-            {step > 1 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="px-4 py-2 rounded border border-gray-300"
-              >
-                Previous
-              </button>
-            )}
+  {/* Right side: Previous + Next */}
+  <div className="flex gap-3">
+    {step > 1 && (
+      <button
+        onClick={() => setStep(step - 1)}
+        className="px-4 py-2 border border-gray-300 text-gray-700 rounded"
+      >
+        Previous
+      </button>
+    )}
 
-            <button
-              onClick={handleNext}
-              className="bg-[#EF9421] text-white px-6 py-2 rounded"
-            >
-              {step === 4 ? "Finish" : "Next"}
-            </button>
-          </div>
-        </div>
+    <button
+      onClick={handleNext}
+      disabled={!isStepComplete()}
+      className={`px-6 py-2 rounded transition
+        ${
+          isStepComplete()
+            ? "bg-[#EF9421] text-white cursor-pointer"
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+        }`}
+    >
+      {step === 3 ? "Finish" : "Next"}
+    </button>
+  </div>
+</div>
+
       </div>
     </div>
   );

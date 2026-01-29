@@ -12,6 +12,7 @@ import { AlertLogModule } from "./charts/alertLogAnalytics";
 import client from "../../redux/axios-baseurl";
 import { useCallback } from "react";
 import DashboardSkeleton from "./dashboardSkeleton";
+import { useNavigate } from "react-router-dom";
 
 function useInViewLogger(componentName, apiFunction) {
   const ref = useRef(null);
@@ -370,6 +371,7 @@ useEffect(() => {
   const alertModuleRef = useInViewLogger("AlertModule", runAlertModuleApi);
   const alertLogModuleRef = useInViewLogger("AlertLogModule", runAlertLogModuleApi);
 
+  const navigate = useNavigate()
 
     return (
   <>
@@ -382,7 +384,7 @@ useEffect(() => {
 
         <button
           className="flex items-center justify-center gap-2 bg-[#EF9421] text-white px-5 py-2 rounded-md hover:bg-orange-400 w-full sm:w-auto"
-          onClick={() => setOpen(true)}
+          onClick={()=>navigate("/quick-setup")}
         >
           <span className="text-lg">+</span>
           Quick Setup

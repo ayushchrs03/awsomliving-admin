@@ -145,7 +145,7 @@ const UserForm = ({ mode }) => {
        {isView ? (
   <div className="px-2 sm:px-0">
     {/* Page Title */}
-    <p className="text-xl sm:text-[28px] leading-tight text-[#121212] font-medium mb-6">
+    <p className="text-xl text-[28px] leading-tight text-[#121212] font-medium mb-6">
       User Details
     </p>
 
@@ -230,29 +230,18 @@ const UserForm = ({ mode }) => {
               onClick={() => handleHomeView(home._id)}
               className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm cursor-pointer transition active:scale-[0.98]"
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3 ">
                 <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center uppercase font-bold text-orange-600 shrink-0">
                   {home?.name?.charAt(0) || "H"}
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 ">
                   <p className="text-sm font-semibold text-gray-900">
                     {capitalizer(home?.name) || "Home"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {home?.connected_devices
-                      ? `${home.connected_devices} Devices`
-                      : "—"}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2 text-xs text-gray-600">
-                <FiHome size={12} />
-                {home?.connected_devices
-                  ? `${home.connected_devices} Connected Devices`
-                  : "—"}
-              </div>
             </div>
           ))}
         </div>

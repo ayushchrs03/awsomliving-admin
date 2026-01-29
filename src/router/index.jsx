@@ -17,6 +17,7 @@ import UserForm from "../pages/users/userForm";
 import ResidentForm from "../pages/resident-management/residentForm";
 import HomeForm from "../pages/alhome/HomeForm";
 import EarlyAccess from "../pages/early-access";
+import SetupWizardModal from "../components/stepForm/index";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
               { index: true, element: <Dashboard /> },
               { path: "dashboard", element: <Dashboard /> },
               { path: "early-access", element: <EarlyAccess /> },
+              { path: "quick-setup", element: <SetupWizardModal /> },
         
               { path: "home", element: <Alhome /> },
               { path: "home/add", element: <HomeForm mode="add" /> },
