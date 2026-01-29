@@ -297,6 +297,14 @@ const UserForm = ({ mode }) => {
         <p className="text-sm text-gray-500">No residents found.</p>
       )}
     </div>
+    <div className="flex justify-end gap-3 pt-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="px-5 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
+          >
+            Back
+          </button>
+        </div>
   </div>
 ) : (
 

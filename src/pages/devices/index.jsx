@@ -32,6 +32,9 @@ function Devices() {
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [copied, setCopied] = useState(false);
 
+
+
+  console.log(data,"data")
   useDebouncedEffect(() => {
     dispatch(clearDeviceState());
     dispatch(

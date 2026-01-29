@@ -54,9 +54,10 @@ export const getDeviceDetails = createAsyncThunk(
         return rejectWithValue(data?.message || "Failed to fetch alerts");
       }
 
-      return {
-        data: data.data.data,
-        pagination: data.data.pagination,
+        return {
+        data: data.data,
+        hasNextPage: data.pagination.has_next_page,
+        nextCursor: data.pagination.next_cursor,
       };
     } catch (error) {
       return handleError(error, rejectWithValue);
