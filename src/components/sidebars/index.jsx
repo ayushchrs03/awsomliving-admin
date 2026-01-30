@@ -161,7 +161,7 @@ export const Sidebar = ({ className, collapse }) => {
             animate={{ scale: 1, translateY: 0 }}
             exit={{ scale: 0, translateY: 500 }}
             onClick={() => setSignOutModalOpen(false)}
-            className="w-full h-full inset-0 bg-black/10 fixed top-0 bottom-0 left-0 right-0 z-[1005]"
+            className="w-full h-full inset-0 bg-black/30 fixed top-0 bottom-0 left-0 right-0 z-[1005]"
           >
             <div
               onClick={(e) => e.stopPropagation()}

@@ -222,12 +222,23 @@ onGenerateToken,
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
-                  type="text"
-                  value={searchValue}
-                  placeholder="Search across user"
-                  onChange={(e) => onSearchChange?.(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#EF9421]"
-                />
+  type="text"
+  value={searchValue}
+  placeholder="Search across user"
+  onChange={(e) => onSearchChange?.(e.target.value)}
+   className="
+    w-full pl-10 pr-3 py-2 text-sm
+    border border-gray-200 rounded-lg
+    outline-none
+    focus:outline-none
+    focus:ring-0
+    focus:border-[#EF9421]
+    focus-visible:outline-none
+    focus-visible:ring-0
+    appearance-none
+  "
+
+/>
               </div>
             )}
 

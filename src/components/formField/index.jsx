@@ -42,7 +42,13 @@ const FormField = ({
                   type="checkbox"
                   checked={Array.isArray(value) && value.includes(opt.value)}
                   onChange={() => onChange(opt.value)}
-                  className="h-4 w-4 accent-orange-500 bg-[#FAFAFA] "
+                  className="
+                    h-4 w-4
+                    bg-[#FAFAFA]
+                    accent-orange-500
+                    appearance-none
+                    outline-none
+                  "
                 />
                 {opt.label}
               </label>
@@ -53,12 +59,15 @@ const FormField = ({
             value={value}
             onChange={onChange}
             required={required}
-            className={`
+            className="
               w-full px-4 py-3 text-sm text-gray-900
-              border border-gray-200 rounded-md
-              bg-[#FAFAFA] outline-none
-              focus:ring-1 focus:ring-[#EF9421] focus:border-[#EF9421]
-            `}
+              border border-[#EBEBEB] rounded-md
+              bg-[#FAFAFA]
+              outline-none
+              focus:ring-[#EF9421]
+              focus:border-[#EF9421]
+              appearance-none
+            "
           >
             <option value="">Select {label}</option>
             {options.map((opt) => (
@@ -83,13 +92,16 @@ const FormField = ({
                 : undefined
             }
             placeholder={`Enter ${label}`}
-            className={`
+            className="
               w-full px-4 py-3 text-sm text-gray-900
-              border border-gray-200 rounded-md
-              bg-[#FAFAFA] outline-none
+              border border-[#EBEBEB] rounded-md
+              bg-[#FAFAFA]
+              outline-none
               placeholder:text-gray-400
-              focus:ring-1 focus:ring-[#EF9421] focus:border-[#EF9421]
-            `}
+              focus:ring-[#EF9421]
+              focus:border-[#EF9421]
+              appearance-none
+            "
           />
         )}
       </div>
