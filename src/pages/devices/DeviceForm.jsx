@@ -13,6 +13,7 @@ import {
 import { getResidentDetails } from "../../redux/actions/resident-action";
 import { toast } from "react-hot-toast";
 import { createFieldUpdater, validateForm } from "../../utils/formUtils";
+import { FaPencil } from "react-icons/fa6";
 import Breadcrumb from "../../components/formField/breadcrumb";
 
 const DeviceForm = ({ mode }) => {
@@ -162,10 +163,19 @@ const [formData, setFormData] = useState({
         </div>
 
         {/* Status */}
-<span className="text-xs sm:text-sm text-green-600 flex items-center gap-2 self-start sm:self-auto">
-          <span className="w-2 h-2 rounded-full bg-green-500" />
-          Active
-        </span>
+ <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                 <span className="text-sm text-green-600 flex items-center gap-2">
+                   <span className="w-2 h-2 rounded-full bg-green-500" />
+                   Active
+                 </span>
+       
+                 <button
+                   onClick={(e) => e.stopPropagation()}
+                   className="text-[#EF9421] text-xl font-bold"
+                 >
+                   <FaPencil className="h-4 w-4" onClick={()=>navigate(`/device/edit?id=${details?._id}`)} />
+                 </button>
+               </div>
       </div>
 
       {/* Device Info Cards */}

@@ -9,14 +9,9 @@ import {
   viewUserDetails,
 } from "../../redux/actions/user-action";
 import { toast } from "react-hot-toast";
-import { FaHome, FaUser } from "react-icons/fa";
-import InfoTile from "../../components/formField/infoTile";
 import Breadcrumb from "../../components/formField/breadcrumb";
 import { FaPhoneAlt } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
-import { FiHome } from "react-icons/fi";
-import { HiDotsVertical } from "react-icons/hi";
-import { FaMicrochip } from "react-icons/fa";
 import {capitalizer} from "../../components/formField/capitalizer"
 import { clearDetails } from "../../redux/slices/userSlice";
 
@@ -25,6 +20,7 @@ import {
   allowOnlyTenDigits,
   validateForm,
 } from "../../utils/formUtils";
+import { FaPencil } from "react-icons/fa6";
 
 const UserForm = ({ mode }) => {
   const navigate = useNavigate();
@@ -46,6 +42,7 @@ const UserForm = ({ mode }) => {
     (state) => state.user
   );
 
+  console.log(details,"detailsdetails")
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -171,7 +168,7 @@ const UserForm = ({ mode }) => {
         </div>
 
         {/* Status + Menu */}
-        <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
           <span className="text-sm text-green-600 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500" />
             Active
@@ -181,7 +178,7 @@ const UserForm = ({ mode }) => {
             onClick={(e) => e.stopPropagation()}
             className="text-[#EF9421] text-xl font-bold"
           >
-            <HiDotsVertical />
+            <FaPencil className="h-4 w-4" onClick={()=>navigate(`/user/edit?id=${details?._id}`)} />
           </button>
         </div>
       </div>
