@@ -379,7 +379,7 @@ useEffect(() => {
       <DashboardSkeleton />
     ) : (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+      <div className="bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
         <h1 className="text-xl sm:text-2xl font-semibold">Dashboard</h1>
 
         <button
