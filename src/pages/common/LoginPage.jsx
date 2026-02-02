@@ -23,6 +23,7 @@ const LoginPage = () => {
   const [isOtpMode, setIsOtpMode] = useState(false);
   const [authToken, setAuthToken] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
+const [resendTimer, setResendTimer] = useState(0);
 
 
   console.log(loading,"loadingloadingloading")
@@ -67,6 +68,7 @@ const LoginPage = () => {
           setLoginEmail(data.email);
           setOtp(["", "", "", "", "", ""]);
           setIsOtpMode(true);
+          setResendTimer(30);
            toast.success(action?.payload?.message + " " + action?.payload?.data?.otp );
         }
       } else {
@@ -120,6 +122,7 @@ const LoginPage = () => {
       action.payload?.data?.token || action.payload?.token;
       toast.success(action?.payload?.message + " " + action?.payload?.data?.otp );
     setAuthToken(token);
+    setResendTimer(30)
   }
 };
 
@@ -169,6 +172,16 @@ useEffect(() => {
       }
     }
   };
+
+  useEffect(() => {
+  if (resendTimer === 0) return;
+
+  const interval = setInterval(() => {
+    setResendTimer((prev) => prev - 1);
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [resendTimer]);
 return (
   <>
     <MetaTitle title="AwesomeLiving" />
@@ -308,12 +321,19 @@ return (
             {isOtpMode && (
               <div className="text-center">
                 <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  className="text-sm font-medium text-gray-700 hover:text-[#EF9421] transition"
-                >
-                  Resend OTP
-                </button>
+  type="button"
+  onClick={handleResendOtp}
+  disabled={resendTimer > 0}
+  className={`text-sm font-medium transition ${
+    resendTimer > 0
+      ? "text-gray-400 cursor-not-allowed"
+      : "text-gray-700 hover:text-[#EF9421]"
+  }`}
+>
+  {resendTimer > 0
+    ? `Resend OTP in ${resendTimer}s`
+    : "Resend OTP"}
+</button>
               </div>
             )}
           </form>
