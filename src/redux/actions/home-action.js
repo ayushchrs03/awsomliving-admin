@@ -20,6 +20,7 @@ export const getHomeDetails = createAsyncThunk("home/fetchHomeDetails",  async (
       return {
         data: data.data,              
         pagination: data.pagination,  
+        counts :data.count
       };
     } catch (error) {
       return handleError(error, rejectWithValue);

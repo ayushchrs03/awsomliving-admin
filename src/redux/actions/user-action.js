@@ -24,6 +24,7 @@ export const getUserDetails = createAsyncThunk("users/fetchUserDetails",   async
    return {
         data: data.data.data,
         pagination: data.data.pagination,
+        counts :data.data.count
       };
     } catch (error) {
       return handleError(error, rejectWithValue);

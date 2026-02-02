@@ -26,6 +26,8 @@ export const getResidentDetails = createAsyncThunk(
       return {
         data: data.data.data,
         pagination: data.data.pagination,
+        counts :data.data.count
+
       };
     } catch (error) {
       return handleError(error, rejectWithValue);

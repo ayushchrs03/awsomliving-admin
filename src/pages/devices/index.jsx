@@ -24,7 +24,7 @@ export const headers = [
 
 function Devices() {
   const dispatch = useDispatch();
-  const { data = [], loading, hasNextPage, nextCursor, token } = useSelector((state) => state.device);
+  const { data = [], loading, hasNextPage, nextCursor, token ,counts} = useSelector((state) => state.device);
 
   const [searchText, setSearchText] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
@@ -53,7 +53,7 @@ function Devices() {
     user: item.resident?.user
       ? `${item.resident.user.first_name} ${item.resident.user.last_name || ""}`
       : "-",
-    status: item.status === "active",
+    status: item.status,
   }));
 
   const handleStatusToggle = async (id, currentStatus) => {
@@ -131,6 +131,12 @@ function Devices() {
         showSearch
         searchValue={searchText}
         onSearchChange={setSearchText}
+         showStats={true}
+        stats={{
+    total: counts?.total || 0,
+    active: counts?.active || 0,
+    inactive: counts?.inactive || 0,
+  }}
       />
 
       <Dialog

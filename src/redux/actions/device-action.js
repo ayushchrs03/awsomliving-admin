@@ -58,6 +58,7 @@ export const getDeviceDetails = createAsyncThunk(
         data: data.data,
         hasNextPage: data.pagination.has_next_page,
         nextCursor: data.pagination.next_cursor,
+        counts : data?.count
       };
     } catch (error) {
       return handleError(error, rejectWithValue);

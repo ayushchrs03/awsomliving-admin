@@ -19,6 +19,11 @@ const alertSlice = createSlice({
     hasNextPage: false,
     isFirstLoad: true,
     searchText: "",
+     counts: {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  },
   },
   reducers: {
     clearError: (state) => {
@@ -52,25 +57,36 @@ const alertSlice = createSlice({
         state.loading = false;
         state.error = null;
 
-        const { data, pagination } = action.payload;
+        const { data, pagination, counts } = action.payload;
 
      const search = action.meta.arg.search || "";
-     if (state.searchText !== search) {
-        state.data = data;
-        state.isFirstLoad = false;
-        state.searchText = search;
-      } else {
-        if (state.isFirstLoad) {
-          state.data = data;
-          state.isFirstLoad = false;
-        } else {
-          state.data = [...state.data, ...data];
-        }
-        }
 
-        state.nextCursor = pagination.next_cursor;
-        state.hasNextPage = pagination.has_next_page;
-      })
+  const normalizedData = data.map((item) => ({
+    ...item,
+    status: item.status === "active",
+  }));
+
+  if (state.searchText !== search) {
+    state.data = normalizedData;
+    state.isFirstLoad = false;
+    state.searchText = search;
+  } else {
+    if (state.isFirstLoad) {
+      state.data = normalizedData;
+      state.isFirstLoad = false;
+    } else {
+      state.data = [...state.data, ...normalizedData];
+    }
+  }
+
+  state.nextCursor = pagination.next_cursor;
+  state.hasNextPage = pagination.has_next_page;
+
+  if (counts) {
+    state.counts = counts;
+  }
+})
+
 
       .addCase(viewAlertDetails.pending, (state) => {
         state.loading = true;
@@ -120,19 +136,31 @@ const alertSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateAlertStatus.fulfilled, (state, action) => {
-        state.loading = false;
+.addCase(updateAlertStatus.fulfilled, (state, action) => {
+  state.loading = false;
 
-        const { id, status } = action.payload;
+  const { id, status } = action.payload;
 
-        const index = state.data.findIndex(
-          (item) => item._id === id
-        );
+  const index = state.data.findIndex(
+    (item) => item._id === id
+  );
 
-        if (index !== -1) {
-          state.data[index].status = status; 
-        }
-      });
+  if (index !== -1) {
+    const previousStatus = state.data[index].status;
+
+    state.data[index].status = status === "active";
+
+    if (previousStatus === true && status === "inactive") {
+      state.counts.active -= 1;
+      state.counts.inactive += 1;
+    }
+
+    if (previousStatus === false && status === "active") {
+      state.counts.inactive -= 1;
+      state.counts.active += 1;
+    }
+  }
+});
   },
 });
 

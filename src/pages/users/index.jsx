@@ -16,9 +16,10 @@ export const headers = [
 
 function Users() {
   const dispatch = useDispatch();
-  const { data, loading, hasNextPage, nextCursor } = useSelector((state) => state.user);
+  const { data, loading, hasNextPage, nextCursor,counts } = useSelector((state) => state.user);
   const [searchText, setSearchText] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
+
 
   useDebouncedEffect(() => {
     dispatch(clearUserState());
@@ -51,7 +52,7 @@ function Users() {
   home: formatNames(item.homes),
   resident: formatNames(item.residents),
 
-  status: item.status === "active",
+  status: item.status,
 }));
 
   const handleStatusToggle = async (id, currentStatus) => {
@@ -105,6 +106,12 @@ function Users() {
 
   statusToggle={true}
   onStatusToggle={handleStatusToggle}
+   showStats={true}
+        stats={{
+    total: counts?.total || 0,
+    active: counts?.active || 0,
+    inactive: counts?.inactive || 0,
+  }}
 />
     </>
   );

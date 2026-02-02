@@ -18,7 +18,7 @@ export const headers = [
 
 function Resident() {
   const dispatch = useDispatch();
-  const { data = [], loading, hasNextPage, nextCursor } = useSelector((state) => state.resident);
+  const { data = [], loading, hasNextPage, nextCursor,counts } = useSelector((state) => state.resident);
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -43,7 +43,7 @@ function Resident() {
     devicename: item.resident?.type || "-",
     emergencyName: item.emergency_con_name || "-",
     emergencyNumber: item.emergency_con_num || "-",
-    status: item.status === "active",
+    status: item.status,
   }));
 
   const handleStatusToggle = async (id, currentStatus) => {
@@ -103,6 +103,12 @@ function Resident() {
         showSearch
         searchValue={searchText}
         onSearchChange={setSearchText}
+         showStats={true}
+        stats={{
+    total: counts?.total || 0,
+    active: counts?.active || 0,
+    inactive: counts?.inactive || 0,
+  }}
       />
     </>
   );

@@ -21,6 +21,11 @@ const deviceSlice = createSlice({
     nextCursor: null,
     searchText: "",
     isFirstLoad: true,
+     counts: {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  },
   },
   reducers: {
     clearError: (state) => {
@@ -52,28 +57,39 @@ const deviceSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(getDeviceDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
+     .addCase(getDeviceDetails.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
 
-        const { data, hasNextPage, nextCursor } = action.payload;
+  const { data, hasNextPage, nextCursor, counts } = action.payload;
+  const search = action.meta.arg.search || "";
 
-        const search = action.meta.arg.search || "";
-        if (state.searchText !== search) {
-          state.data = data;
-          state.searchText = search;
-          state.isFirstLoad = false;
-        } else {
-          if (state.isFirstLoad) {
-            state.data = data;
-            state.isFirstLoad = false;
-          } else {
-        state.data = [...state.data, ...data];
-          }
-        }
-        state.hasNextPage = hasNextPage;
-        state.nextCursor = nextCursor;
-      })
+  const normalizedData = data.map((item) => ({
+    ...item,
+    status: item.status === "active",
+  }));
+
+  if (state.searchText !== search) {
+    state.data = normalizedData;
+    state.searchText = search;
+    state.isFirstLoad = false;
+  } else {
+    if (state.isFirstLoad) {
+      state.data = normalizedData;
+      state.isFirstLoad = false;
+    } else {
+      state.data = [...state.data, ...normalizedData];
+    }
+  }
+
+  state.hasNextPage = hasNextPage;
+  state.nextCursor = nextCursor;
+
+  if (counts) {
+    state.counts = counts;
+  }
+})
+
 
       .addCase(viewDeviceDetails.pending, (state) => {
         state.loading = true;
@@ -118,15 +134,34 @@ const deviceSlice = createSlice({
       })
 
       .addCase(updateDeviceStatus.fulfilled, (state, action) => {
-        const { id, status } = action.payload;
+  const { id, status } = action.payload;
 
-        const index = state.data.findIndex(
-          (item) => item._id === id
-        );
-        if (index !== -1) {
-          state.data[index].status = status;
-        }
-      })
+  const index = state.data.findIndex(
+    (item) => item._id === id
+  );
+
+  if (index !== -1) {
+    const previousStatus = state.data[index].status;
+
+    // update row
+    state.data[index].status = status === "active";
+
+    // update counts
+    if (previousStatus === true && status === "inactive") {
+      state.counts.active -= 1;
+      state.counts.inactive += 1;
+    }
+
+    if (previousStatus === false && status === "active") {
+      state.counts.inactive -= 1;
+      state.counts.active += 1;
+    }
+
+    // safety clamp
+    state.counts.active = Math.max(0, state.counts.active);
+    state.counts.inactive = Math.max(0, state.counts.inactive);
+  }
+})
 
       .addCase(createDeviceToken.pending, (state) => {
         state.loading = true;

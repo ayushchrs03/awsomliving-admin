@@ -18,10 +18,12 @@ export const headers = [
 
 function Home() {
   const dispatch = useDispatch();
-  const { data, loading, hasNextPage, nextCursor } = useSelector((state) => state.home);
+  const { data, loading, hasNextPage, nextCursor,counts } = useSelector((state) => state.home);
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
 
+
+  console.log()
   useDebouncedEffect(() => {
     dispatch(clearHomeState());
     dispatch(
@@ -37,7 +39,7 @@ function Home() {
     return {
       _id: item._id,
       name: item.name || "-",
-      status: item.status === "active",
+      status: item.status,
       userName: item.user?.first_name || "-",
       userEmail: item.user?.email || "-",
       residentName: resident.name || "-",
@@ -107,6 +109,12 @@ function Home() {
         showSearch={true}
         searchValue={searchText}
         onSearchChange={setSearchText}
+         showStats={true}
+        stats={{
+    total: counts?.total || 0,
+    active: counts?.active || 0,
+    inactive: counts?.inactive || 0,
+  }}
       />
     </>
   );

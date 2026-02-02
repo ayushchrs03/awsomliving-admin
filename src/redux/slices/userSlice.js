@@ -19,6 +19,11 @@ const homeSlice = createSlice({
     hasNextPage: false,
     isFirstLoad: true,
     searchText: "",
+    counts: {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  },
   },
 
   reducers: {
@@ -53,31 +58,38 @@ const homeSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-     .addCase(getUserDetails.fulfilled, (state, action) => {
+  .addCase(getUserDetails.fulfilled, (state, action) => {
   state.loading = false;
   state.error = null;
 
-  const { data, pagination } = action.payload;
-
+  const { data, pagination, counts } = action.payload;
   const search = action.meta.arg.search || "";
 
+  const normalizedData = data.map((item) => ({
+    ...item,
+    status: item.status === "active",
+  }));
+
   if (state.searchText !== search) {
-    state.data = data;
+    state.data = normalizedData;
     state.isFirstLoad = false;
     state.searchText = search;
   } else {
     if (state.isFirstLoad) {
-      state.data = data;
+      state.data = normalizedData;
       state.isFirstLoad = false;
     } else {
-      state.data = [...state.data, ...data];
+      state.data = [...state.data, ...normalizedData];
     }
   }
 
   state.nextCursor = pagination.next_cursor;
   state.hasNextPage = pagination.has_next_page;
-})
 
+  if (counts) {
+    state.counts = counts;
+  }
+})
       .addCase(viewUserDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -128,20 +140,44 @@ const homeSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateUserStatus.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
+     .addCase(updateUserStatus.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
 
-        const { id, status } = action.payload;
+  const { id, status } = action.payload;
 
-        const index = state.data.findIndex(
-          (item) => item._id === id
-        );
+  const index = state.data.findIndex(
+    (item) => item._id === id
+  );
 
-        if (index !== -1) {
-          state.data[index].status = status;
-        }
-      });
+  if (index !== -1) {
+    const previousStatus = state.data[index].status;
+
+    // update row
+    state.data[index].status = status === "active";
+
+    // update counts
+    if (previousStatus === true && status === "inactive") {
+      state.counts.active -= 1;
+      state.counts.inactive += 1;
+    }
+
+    if (previousStatus === false && status === "active") {
+      state.counts.inactive -= 1;
+      state.counts.active += 1;
+    }
+
+    // safety clamp
+    state.counts.active = Math.max(0, state.counts.active);
+    state.counts.inactive = Math.max(0, state.counts.inactive);
+  }
+
+  // keep details in sync
+  if (state.details && state.details._id === id) {
+    state.details.status = status === "active";
+  }
+});
+
   },
 });
 

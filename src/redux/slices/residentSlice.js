@@ -20,6 +20,11 @@ const residentSlice = createSlice({
     hasNextPage: false,
     isFirstLoad: true,
     searchText: "",
+    counts: {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  },
   },
 
   reducers: {
@@ -58,27 +63,36 @@ const residentSlice = createSlice({
         state.error = action.payload;
       })
 
-     .addCase(getResidentDetails.fulfilled, (state, action) => {
+    .addCase(getResidentDetails.fulfilled, (state, action) => {
   state.loading = false;
   state.error = null;
 
-  const { data, pagination } = action.payload;
+  const { data, pagination, counts } = action.payload;
   const search = action.meta.arg.search || "";
   const cursor = action.meta.arg.cursor || null;
 
-  // If search text changed OR fetching first page (cursor is null), replace data
+  const normalizedData = data.map((item) => ({
+    ...item,
+    status: item.status === "active",
+  }));
+
+  // Replace on new search OR first page
   if (state.searchText !== search || !cursor) {
-    state.data = data; // replace old data with new search results
-    state.searchText = search; // store current search text
+    state.data = normalizedData;
+    state.searchText = search;
   } else {
-    // Otherwise append data for "load more"
-    state.data = [...state.data, ...data];
+    // Append on load more
+    state.data = [...state.data, ...normalizedData];
   }
 
-  // Update pagination
   state.nextCursor = pagination?.next_cursor || null;
   state.hasNextPage = pagination?.has_next_page || false;
+
+  if (counts) {
+    state.counts = counts;
+  }
 })
+
       .addCase(viewResidentDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -136,15 +150,35 @@ const residentSlice = createSlice({
       })
 
       .addCase(updateResidentStatus.fulfilled, (state, action) => {
-        const { id, status } = action.payload;
+  const { id, status } = action.payload;
 
-        if (Array.isArray(state.data)) {
-          const resident = state.data.find((item) => item._id === id);
-          if (resident) {
-            resident.status = status;
-          }
-        }
-      });
+  if (Array.isArray(state.data)) {
+    const resident = state.data.find((item) => item._id === id);
+
+    if (resident) {
+      const previousStatus = resident.status;
+
+      // update row
+      resident.status = status === "active";
+
+      // update counts
+      if (previousStatus === true && status === "inactive") {
+        state.counts.active -= 1;
+        state.counts.inactive += 1;
+      }
+
+      if (previousStatus === false && status === "active") {
+        state.counts.inactive -= 1;
+        state.counts.active += 1;
+      }
+
+      // safety clamp
+      state.counts.active = Math.max(0, state.counts.active);
+      state.counts.inactive = Math.max(0, state.counts.inactive);
+    }
+  }
+});
+
   },
 });
 

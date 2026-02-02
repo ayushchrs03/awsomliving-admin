@@ -16,7 +16,7 @@ export const headers = [
 
 function Alerts() {
   const dispatch = useDispatch();
-  const { data = [], loading, hasNextPage, nextCursor } = useSelector((state) => state.alert);
+  const { data = [], loading, hasNextPage, nextCursor,counts  } = useSelector((state) => state.alert);
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -57,7 +57,7 @@ function Alerts() {
     name: item.name || "-",
     device: item.selected_device || item.selectedDevice || "-",
     type: types.length ? types.join(", ") : "-",
-    status: item.status === "active",
+    status: item.status,
   };
 });
 
@@ -92,6 +92,8 @@ function Alerts() {
     toast.success(`${ids.length} alerts selected for delete`);
   };
 
+
+  console.log(counts ,"datadatadata")
   return (
     <>
       <Breadcrumb items={[{ label: "Alert" }]} />
@@ -119,6 +121,12 @@ function Alerts() {
         showSearch
         searchValue={searchText}
         onSearchChange={setSearchText}
+        showStats={true}
+        stats={{
+    total: counts?.total || 0,
+    active: counts?.active || 0,
+    inactive: counts?.inactive || 0,
+  }}
       />
     </>
   );

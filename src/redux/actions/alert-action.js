@@ -26,6 +26,7 @@ export const getAlertDetails = createAsyncThunk(
       return {
         data: data.data.data,
         pagination: data.data.pagination,
+        counts : data?.data?.counts
       };
     } catch (error) {
       return handleError(error, rejectWithValue);

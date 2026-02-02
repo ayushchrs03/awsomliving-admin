@@ -14,6 +14,11 @@ const homeSlice = createSlice({
         hasNextPage: false,
         isFirstLoad: true,
         searchText: "",
+          counts: {
+    active: 0,
+    inactive: 0,
+    total: 0,
+  },
   },
 
   reducers: {
@@ -53,25 +58,37 @@ const homeSlice = createSlice({
   state.error = null;
 
   const data = action.payload?.data || [];
+  const counts = action.payload?.counts || {};
   const pagination = action.payload?.pagination || {};
 
   const search = action.meta.arg.search || "";
+
+  const normalizedData = data.map((item) => ({
+    ...item,
+    status: item.status === "active",
+  }));
+
   if (state.searchText !== search) {
-    state.data = data;
+    state.data = normalizedData;
     state.isFirstLoad = false;
     state.searchText = search;
   } else {
-  if (state.isFirstLoad) {
-    state.data = data;
-    state.isFirstLoad = false;
-  } else {
-    state.data = [...state.data, ...data];
+    if (state.isFirstLoad) {
+      state.data = normalizedData;
+      state.isFirstLoad = false;
+    } else {
+      state.data = [...state.data, ...normalizedData];
     }
   }
 
   state.nextCursor = pagination.next_cursor || null;
   state.hasNextPage = pagination.has_next_page || false;
+
+  if (counts) {
+    state.counts = counts;
+  }
 })
+
 
       .addCase(viewHomeDetails.pending, (state) => {
         state.loading = true;
@@ -123,24 +140,44 @@ const homeSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateHomeStatus.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = null;
+     .addCase(updateHomeStatus.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
 
-        const { id, status } = action.payload;
+  const { id, status } = action.payload;
 
-        const index = state.data.findIndex(
-          (item) => item._id === id
-        );
+  const index = state.data.findIndex(
+    (item) => item._id === id
+  );
 
-        if (index !== -1) {
-          state.data[index].status = status;
-        }
+  if (index !== -1) {
+    const previousStatus = state.data[index].status;
 
-        if (state.details && state.details._id === id) {
-          state.details.status = status;
-        }
-      });
+    // update row
+    state.data[index].status = status === "active";
+
+    // update counts
+    if (previousStatus === true && status === "inactive") {
+      state.counts.active -= 1;
+      state.counts.inactive += 1;
+    }
+
+    if (previousStatus === false && status === "active") {
+      state.counts.inactive -= 1;
+      state.counts.active += 1;
+    }
+
+    // safety clamp
+    state.counts.active = Math.max(0, state.counts.active);
+    state.counts.inactive = Math.max(0, state.counts.inactive);
+  }
+
+  // keep details in sync
+  if (state.details && state.details._id === id) {
+    state.details.status = status === "active";
+  }
+});
+
   },
 });
 
