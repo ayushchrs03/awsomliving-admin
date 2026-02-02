@@ -9,9 +9,7 @@ import {useDebouncedEffect} from "../../components/formField/capitalizer"
 
 export const headers = [
   { fieldName: "name", headerName: "Alert Name" },
-  { fieldName: "device", headerName: "Device" },
-  { fieldName: "threshold", headerName: "Threshold" },
-  { fieldName: "message", headerName: "Message" },
+  { fieldName: "device", headerName: "Device Type" },
   { fieldName: "type", headerName: "Type" },
   { fieldName: "status", headerName: "Status" },
 ];
@@ -33,15 +31,35 @@ function Alerts() {
     );
   }, [searchText, dispatch], 500);
 
-  const tableData = data.map((item) => ({
+  const tableData = data.map((item) => {
+  const notifications =
+    item.notifications ||
+    item.fall_detector?.notifications ||
+    item.vital_tracker?.notifications ||
+    {};
+
+  const types = [];
+
+  if (notifications.in_app || notifications.inApp) {
+    types.push("In App");
+  }
+
+  if (notifications.text_message || notifications.textMessage) {
+    types.push("Text Message");
+  }
+
+  if (notifications.mail) {
+    types.push("Email");
+  }
+
+  return {
     _id: item._id,
     name: item.name || "-",
-    device: item.device || "-",
-    threshold: item.threshold || "-",
-    message: item.msg || "-",
-    type: item.notification_type || "-",
+    device: item.selected_device || item.selectedDevice || "-",
+    type: types.length ? types.join(", ") : "-",
     status: item.status === "active",
-  }));
+  };
+});
 
   const handleStatusToggle = async (id, currentStatus) => {
     try {
